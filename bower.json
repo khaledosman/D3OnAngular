@@ -1,0 +1,27 @@
+{
+  "name": "itonics",
+  "version": "0.0.0",
+  "authors": [
+    "Khaled Osman <khaled.osmaan@gmail.com>"
+  ],
+  "description": "A web app to do some crazy visualizations with d3 and angular",
+  "main": "index.html",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "angular",
+    "d3",
+    "itonics"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "d3": "~3.5.5",
+    "angular": "~1.4.1"
+  }
+}

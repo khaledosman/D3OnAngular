@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Itonics Visualizations </title>
+	<script src="bower_components/angular/angular.js"></script>
+	<script charset="utf-8" src="bower_components/d3/d3.js"></script>
+	<link rel="stylesheet" type="text/css" href="app/styles/main.css">
+	<script src="app/scripts/app.js"></script>
+	<script src="app/scripts/controllers/d3Controller.js"></script>
+	<script src="app/scripts/services/d3Service.js"></script>
+	<script src="app/scripts/directives/simpleLineChartDirective.js"></script>
+</head>
+<body ng-app="Itonics">
+<div ng-controller = "d3Controller">
+<h3> Setting everything up </h3>
+<p> This is a value bound to the scope : {{helloworld}} </p>
+ 	<simple-line-chart></simple-line-chart> 
+
+</div>
+</body>
+	
+<script type="text/javascript">
+	console.log(d3);
+	console.log(angular);
+</script>	
+</html>
