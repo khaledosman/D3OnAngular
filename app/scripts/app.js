@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module("Itonics", ['d3']);
+var app = angular.module('myApp', []);

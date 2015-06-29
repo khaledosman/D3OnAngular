@@ -1,4 +1,36 @@
-p {
-  color: blue;
-  font-size: 28;
+<style>
+  body{
+    text-align: center;
+  }
+  donut-chart{
+    width: 250px;
+    height: 150px;
+    display:inline-block;
+    cursor: pointer;
+  }
+  force-layout{
+    width: 550px;
+    height: 550px;
+    display:inline-block;
+    cursor: pointer;
+  }
+
+  .node circle {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
 }
+
+.node text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+</style>
