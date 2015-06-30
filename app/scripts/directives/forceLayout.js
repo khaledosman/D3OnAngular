@@ -56,10 +56,13 @@ function update() {
   node = node.data(nodes, function(d) { return d.id; });
 
   function mouseover() {
-     this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
+    if(!this.oldRadius)
+    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
+    console.log(this.oldRadius);
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
+    this.currentRadius=30;
 }
 
   function mouseout() {
