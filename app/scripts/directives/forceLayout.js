@@ -12,6 +12,7 @@ app.directive('forceLayout', function() {
     var width = el.clientWidth;
     var height = el.clientHeight;
     var root;
+    var min = Math.min(width, height);
     var url=attr.url;
     var svg = d3.select(el).append('svg')
       .attr({width: width, height: height});
@@ -55,6 +56,17 @@ function update() {
   // Update nodes.
   node = node.data(nodes, function(d) { return d.id; });
 
+  function mouseover() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 30);
+}
+
+  function mouseout() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 16);
+}
   node.exit().remove();
 
   var nodeEnter = node.enter().append("g")
@@ -63,7 +75,8 @@ function update() {
       .call(force.drag);
 
   nodeEnter.append("circle")
-      .attr("r", function(d) { return Math.sqrt(d.size) / 8 || 20; });
+      .attr("r", function(d) { return Math.sqrt(d.size) / 8 || 20; })
+     
 
   nodeEnter.append("text")
       .attr("dy", ".35em")
@@ -71,6 +84,9 @@ function update() {
 
   node.select("circle")
       .style("fill", color);
+
+      node.on("mouseover", mouseover)
+      .on("mouseout", mouseout);
 }
 
 function tick() {
