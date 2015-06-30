@@ -56,7 +56,7 @@ function update() {
   node = node.data(nodes, function(d) { return d.id; });
 
   function mouseover() {
-    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
+     this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
@@ -79,18 +79,20 @@ function update() {
   nodeEnter.append("circle")
       .attr("r", function(d) { return Math.sqrt(d.size) / 9 || 15; });
      
-console.log(d3.select("text"));
   nodeEnter.append("text")
-      .attr("dy", "0em")
-      .style("fill","grey")
-      .text(function(d) { return setText(this, d.name); });
+      .attr("dy", "-1.3em")
+      .style("fill","gray")
+      .text(function(d) { setText(this, d.name);
+      return d.name; });
 
   function setText(textElmt,str) {
    textElmt.textContent = str;
    var box = textElmt.getBBox();
    var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
    //rect.style("fill","red");
-   //rect.setAttribute('class','yourCustomBackground');
+   rect.setAttribute('fill','white');
+   rect.setAttribute("border", "1px solid #cccccc");
+
    for (var n in box) { rect.setAttribute(n,box[n]); }
    textElmt.parentNode.insertBefore(rect,textElmt);
 }
