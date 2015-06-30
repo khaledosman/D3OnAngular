@@ -57,15 +57,17 @@ function update() {
   node = node.data(nodes, function(d) { return d.id; });
 
   function mouseover() {
+    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
   d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
 }
 
   function mouseout() {
+    console.log(d3.select(this).select("circle")[0][0].r.baseVal.value);
   d3.select(this).select("circle").transition()
       .duration(750)
-      .attr("r", 16);
+      .attr("r", this.oldRadius);
 }
   node.exit().remove();
 
