@@ -6,18 +6,19 @@
 <script src="bower_components/d3/d3.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 <script src="app/scripts/app.js"></script>
+
+<link rel="stylesheet" type="text/css" href="app/styles/main.css">
 <script src="app/scripts/controllers/donutChartController.js"></script>
 <script src="app/scripts/directives/donutChart.js"></script>
 <script src="app/scripts/controllers/forceLayoutController.js"></script>
 <script src="app/scripts/directives/forceLayout.js"></script>
 
-<link rel="stylesheet" type="text/css" href="app/styles/main.css">
-
 <body ng-app="myApp">
 
-  <div ng-controller="donutChartController">
+  <div ng-controller="forceLayoutController">
   <!-- <donut-chart data="shared.data" on-click="chartClicked()" ng-repeat="chart in charts"></donut-chart> -->
-    <force-layout url="graph.json"></force-layout>
+  <p>{{jsonUrl}}</p>
+    <force-layout url={{jsonUrl}}></force-layout>
   </div>
 
 </body>

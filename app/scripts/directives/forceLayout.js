@@ -13,10 +13,16 @@ app.directive('forceLayout', function() {
     var height = el.clientHeight;
     var root;
     var min = Math.min(width, height);
-    var url=attr.url;
+    var url = attr.url;
     var svg = d3.select(el).append('svg')
       .attr({width: width, height: height});
 
+ d3.json(url, function(error, json) {
+  if (error) throw error;
+
+  root = json;
+  update();
+});
 
 var force = d3.layout.force()
     .linkDistance(80)
@@ -28,22 +34,15 @@ var force = d3.layout.force()
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node");
 
- d3.json(url, function(error, json) {
-  if (error) throw error;
-
-  root = json;
-  update();
-});
-
 function update() {
   var nodes = flatten(root),
       links = d3.layout.tree().links(nodes);
 
   // Restart the force layout.
   force
-      .nodes(nodes)
-      .links(links)
-      .start();
+    .nodes(nodes)
+    .links(links)
+    .start();
 
   // Update links.
   link = link.data(links, function(d) { return d.target.id; });
@@ -58,14 +57,13 @@ function update() {
 
   function mouseover() {
     this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
-  d3.select(this).select("circle").transition()
+    d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
 }
 
   function mouseout() {
-    console.log(d3.select(this).select("circle")[0][0].r.baseVal.value);
-  d3.select(this).select("circle").transition()
+    d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
 }
@@ -74,36 +72,54 @@ function update() {
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .on("click", click)
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout)
       .call(force.drag);
 
   nodeEnter.append("circle")
-      .attr("r", function(d) { return Math.sqrt(d.size) / 8 || 20; })
+      .attr("r", function(d) { return Math.sqrt(d.size) / 9 || 15; });
      
-
+console.log(d3.select("text"));
   nodeEnter.append("text")
-      .attr("dy", ".35em")
-      .text(function(d) { return d.name; });
+      .attr("dy", "0em")
+      .style("fill","grey")
+      .text(function(d) { return setText(this, d.name); });
+
+  function setText(textElmt,str) {
+   textElmt.textContent = str;
+   var box = textElmt.getBBox();
+   var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+   //rect.style("fill","red");
+   //rect.setAttribute('class','yourCustomBackground');
+   for (var n in box) { rect.setAttribute(n,box[n]); }
+   textElmt.parentNode.insertBefore(rect,textElmt);
+}
+
 
   node.select("circle")
+      .transition()
+      .duration(700)
       .style("fill", color);
 
-      node.on("mouseover", mouseover)
-      .on("mouseout", mouseout);
 }
 
 function tick() {
-  link.attr("x1", function(d) { return d.source.x; })
+  link
+      .transition()
+      .duration(10)
+      .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
-  node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  node
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 }
 
 function color(d) {
-  return d._children ? "#3182bd" // collapsed package
-      : d.children ? "#c6dbef" // expanded package
-      : "#fd8d3c"; // leaf node
+  return d._children ? "#3282bd" // collapsed package
+      : d.children ? "#b2dbef" // expanded package
+      : "#5a834c"; // leaf node
 }
 
 // Toggle children on click.
