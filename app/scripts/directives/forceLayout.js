@@ -28,7 +28,7 @@ var force = d3.layout.force()
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node");
 
-scope.$watch('url', function(oldval, newval){
+scope.$watch('url', function(newval, oldval){
   console.log('url changed');
   console.log('new url',newval);
   console.log('old url',oldval);
