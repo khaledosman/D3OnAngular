@@ -2,7 +2,7 @@ app.directive('forceLayout', function() {
 
   // isolate scope
   return {
-    scope: { 'data': '=', 'onClick': '&' },
+    scope: { 'url': '=', 'onClick': '&' },
     restrict: 'E',
     link: link
   };
@@ -33,6 +33,12 @@ var force = d3.layout.force()
 
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node");
+
+scope.$watch('url', function(oldval, newval){
+  console.log('url changed');
+  console.log('new url',newval);
+  console.log('old url',oldval);
+});
 
 function update() {
   var nodes = flatten(root),
@@ -100,25 +106,21 @@ function update() {
    textElmt.parentNode.insertBefore(rect,textElmt);
 }
 
-
   node.select("circle")
       .transition()
       .duration(700)
       .style("fill", color);
-
 }
 
 function tick() {
   link
-      .transition()
-      .duration(10)
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
   node
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 }
 
 function color(d) {

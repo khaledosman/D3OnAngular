@@ -15,10 +15,16 @@
 
 <body ng-app="myApp">
 
+<!--
+<div ng-controller="donutChartController">
+ <donut-chart data="shared.data" on-click="chartClicked()" ng-repeat="chart in charts"></donut-chart> -
+ </div>
+ -->
+
   <div ng-controller="forceLayoutController">
-  <!-- <donut-chart data="shared.data" on-click="chartClicked()" ng-repeat="chart in charts"></donut-chart> -->
-  <p>{{jsonUrl}}</p>
-    <force-layout url={{jsonUrl}}></force-layout>
+  <p>{{shared.url}}</p>
+    <force-layout url="shared.url" force-layout>
   </div>
+
 
 </body>

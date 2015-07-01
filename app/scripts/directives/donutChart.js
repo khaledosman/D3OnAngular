@@ -53,6 +53,7 @@ app.directive('donutChart', function() {
     // our data changed! update the arcs, adding, updating, or removing 
     // elements as needed
     scope.$watch('data', function(newData, oldData){
+      console.log('data changed');
       var data = newData.slice(0); // copy
       var duration = 500;
       var PI = Math.PI;
