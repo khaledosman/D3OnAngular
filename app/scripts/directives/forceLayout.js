@@ -17,12 +17,6 @@ app.directive('forceLayout', function() {
     var svg = d3.select(el).append('svg')
       .attr({width: width, height: height});
 
- d3.json(url, function(error, json) {
-  if (error) throw error;
-
-  root = json;
-  update();
-});
 
 var force = d3.layout.force()
     .linkDistance(80)
@@ -38,6 +32,12 @@ scope.$watch('url', function(oldval, newval){
   console.log('url changed');
   console.log('new url',newval);
   console.log('old url',oldval);
+  d3.json(newval, function(error, json) {
+  if (error) throw error;
+
+  root = json;
+  update();
+});
 });
 
 function update() {
