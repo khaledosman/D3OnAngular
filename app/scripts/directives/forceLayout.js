@@ -31,23 +31,17 @@ scope.$watch('url', function(newval, oldval){
   console.log('new url',newval);
   console.log('old url',oldval);
   d3.json(newval, function(error, json) {
-  if (error) throw error;
-  console.log(json);
-  root = json;
-  //redraw
-  update();
-});
+    if (error) throw error;
+    console.log(json);
+    root = json;
+    //redraw
+    update();
+  });
 });
 
 function update() {
   var nodes = flatten(root),
       links = d3.layout.tree().links(nodes);
-
-  // Restart the force layout.
-  force
-    .nodes(nodes)
-    .links(links)
-    .start();
 
   // Update links.
   link = link.data(links, function(d) { return d.target.id; });
@@ -75,12 +69,20 @@ function update() {
   nodeEnter.append("text")
       .attr("dy", "-1.3em")
       .style("fill","gray")
-      .text(function(d) { setText(this, d.name);
-      return d.name; });
+      .text(function(d) { 
+        setText(this, d.name);
+        return d.name; 
+      });
+
+  // Restart the force layout.
+  force
+    .nodes(nodes)
+    .links(links)
+    .start();
 
   function mouseover() {
     if(!this.oldRadius)
-    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
+      this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
     console.log(this.oldRadius);
     d3.select(this).select("circle").transition()
       .duration(750)
@@ -96,15 +98,15 @@ function update() {
 
 
   function setText(textElmt,str) {
-   textElmt.textContent = str;
-   var box = textElmt.getBBox();
-   var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
-   //rect.style("fill","red");
-   rect.setAttribute('fill','white');
-   rect.setAttribute("border", "1px solid #cccccc");
+     textElmt.textContent = str;
+     var box = textElmt.getBBox();
+     var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+     //rect.style("fill","red");
+     rect.setAttribute('fill','white');
+     rect.setAttribute("border", "1px solid #cccccc");
 
-   for (var n in box) { rect.setAttribute(n,box[n]); }
-   textElmt.parentNode.insertBefore(rect,textElmt);
+     for (var n in box) { rect.setAttribute(n,box[n]); }
+     textElmt.parentNode.insertBefore(rect,textElmt);
 }
 
   node.select("circle")
@@ -115,10 +117,10 @@ function update() {
 
 function tick() {
   link
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
+    .attr("x1", function(d) { return d.source.x; })
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
 
   node
     .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
@@ -156,5 +158,5 @@ function flatten(root) {
   recurse(root);
   return nodes;
 }
-  }
+}
 });
