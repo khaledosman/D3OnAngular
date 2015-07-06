@@ -12,8 +12,6 @@ app.directive('forceLayout', function() {
     var width = el.clientWidth;
     var height = el.clientHeight;
     var root;
-    var min = Math.min(width, height);
-    var url = attr.url;
     var svg = d3.select(el).append('svg')
       .attr({width: width, height: height});
 
