@@ -96,8 +96,7 @@ function update() {
 
     selected.select("circle").transition()
       .duration(750)
-      .attr("r", 30);
-   selected(this)
+      .attr("r", 30)
       .attr("opacity",1);
     this.currentRadius=30;
 
@@ -126,7 +125,7 @@ function update() {
               node.each(function(n) {
                if(n.name === d.source.name || n.name === d.target.name)
             {
-              d3.select(this).attr("opacity",0.3);
+              d3.select(this).attr("opacity",0.5);
             }
           });
           }
