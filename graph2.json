@@ -7,7 +7,7 @@
     {
      "name": "cluster",
      "children": [
-      {"name": "AgglomerativeCluster", "size": 3938},
+      {"name": "AgglomerativeCluster", "size": 3938, "children":[{"name":"1"},{"name":"2"},{"name":"3"}]},
       {"name": "CommunityStructure", "size": 3812},
       {"name": "HierarchicalCluster", "size": 6714},
       {"name": "MergeEdge", "size": 743}
@@ -26,7 +26,8 @@
     {
      "name": "optimization",
      "children": [
-      {"name": "AspectRatioBanker", "size": 7074}
+      {"name": "AspectRatioBanker", "size": 7074},
+      {"name": "Khaled", "size":2000}  
      ]
     }
    ]
