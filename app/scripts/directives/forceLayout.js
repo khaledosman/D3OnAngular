@@ -34,7 +34,7 @@ scope.$watch('url', function(newval, oldval){
   console.log('old url',oldval);
   d3.json(newval, function(error, json) {
   if (error) throw error;
-
+  console.log(json);
   root = json;
   update();
 });
@@ -61,21 +61,6 @@ function update() {
   // Update nodes.
   node = node.data(nodes, function(d) { return d.id; });
 
-  function mouseover() {
-    if(!this.oldRadius)
-    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
-    console.log(this.oldRadius);
-    d3.select(this).select("circle").transition()
-      .duration(750)
-      .attr("r", 30);
-    this.currentRadius=30;
-}
-
-  function mouseout() {
-    d3.select(this).select("circle").transition()
-      .duration(750)
-      .attr("r", this.oldRadius);
-}
   node.exit().remove();
 
   var nodeEnter = node.enter().append("g")
@@ -93,6 +78,23 @@ function update() {
       .style("fill","gray")
       .text(function(d) { setText(this, d.name);
       return d.name; });
+
+  function mouseover() {
+    if(!this.oldRadius)
+    this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
+    console.log(this.oldRadius);
+    d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 30);
+    this.currentRadius=30;
+}
+
+  function mouseout() {
+    d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", this.oldRadius);
+}
+
 
   function setText(textElmt,str) {
    textElmt.textContent = str;
