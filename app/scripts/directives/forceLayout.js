@@ -87,16 +87,17 @@ function update() {
 //console.log(nodes);
 
   function mouseover() {
+    var selected = d3.select(this);
     if(!this.oldRadius)
-      this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
-      var name = d3.select(this).text();
+      this.oldRadius = selected.select("circle")[0][0].r.baseVal.value;
+      var name = selected.text();
 //console.log(this.oldRadius);
 //    node.attr("opacity",0.5);
 
-    d3.select(this).select("circle").transition()
+    selected.select("circle").transition()
       .duration(750)
       .attr("r", 30);
-    d3.select(this)
+   selected(this)
       .attr("opacity",1);
     this.currentRadius=30;
 
@@ -115,8 +116,8 @@ function update() {
 }
 
   function mouseout() {
-
-    var name = d3.select(this).text();
+    var selected = d3.select(this);
+    var name = selected.text();
     //node.attr("opacity",1);
     //console.log(d3.select(this));
           link.each(function(d) { 
@@ -131,7 +132,7 @@ function update() {
           }
       });
 
-    d3.select(this).select("circle").transition()
+    selected.select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
 }
