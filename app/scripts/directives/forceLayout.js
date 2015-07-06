@@ -32,7 +32,7 @@ scope.$watch('url', function(newval, oldval){
   console.log('old url',oldval);
   d3.json(newval, function(error, json) {
     if (error) throw error;
-    console.log(json);
+    //console.log(json);
     root = json;
     //redraw
     update();
@@ -84,9 +84,13 @@ function update() {
     if(!this.oldRadius)
       this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
     console.log(this.oldRadius);
+    node.attr("opacity",0.5);
+    console.log(d3.select(this));
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
+    d3.select(this)
+      .attr("opacity",1);
     this.currentRadius=30;
 }
 
@@ -94,6 +98,7 @@ function update() {
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
+    node.attr("opacity",1);
 }
 
 
