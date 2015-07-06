@@ -52,7 +52,8 @@ function update() {
   link.exit().remove();
 
   var linkEnter = link.enter().insert("line", ".node")
-      .attr("class", "link");
+      .attr("class", "link")
+      .attr("opacity", 0.4);
 
   // Update nodes.
   node = node.data(nodes, function(d) { return d.id; });
@@ -61,6 +62,7 @@ function update() {
 
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
+      .attr("opacity",0.4)
       .on("click", click)
       .on("mouseover", mouseover)
       .on("mouseout", mouseout)
