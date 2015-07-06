@@ -115,7 +115,7 @@ function update() {
     //console.log(d3.select(this));
           link.each(function(d) { 
             if(d.source.name === name || d.target.name === name){
-              d3.select(this).attr("opacity",0.3);
+              d3.select(this).attr("opacity",0.6);
           }
       });
 
