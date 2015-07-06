@@ -49,20 +49,20 @@ app.directive('forceLayout', function() {
     // Update links.
       link = link.data(links, function(d) { return d.target.id; });
 
-      link.exit().remove();
+      link.exit().transition().duration(600).remove();
 
       var linkEnter = link.enter().insert("line", ".node")
         .attr("class", "link")
-        .attr("opacity", 0.6);
+        .attr("opacity", 0.7);
 
     // Update nodes.
       node = node.data(nodes, function(d) { return d.id; });
 
-      node.exit().remove();
+      node.exit().transition().duration(600).remove();
 
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
-        .attr("opacity",0.6)
+        .attr("opacity",0.7)
         .on("click", click)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout)
