@@ -90,15 +90,8 @@ function update() {
     if(!this.oldRadius)
       this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
       var name = d3.select(this).text();
-
-    //console.log(d3.select(this));
-          link.each(function(d) { 
-            if(d.source.name === name || d.target.name === name){
-              d3.select(this).attr("opacity",1);
-          }
-      });
-    //console.log(this.oldRadius);
-    node.attr("opacity",0.5);
+//console.log(this.oldRadius);
+//    node.attr("opacity",0.5);
 
     d3.select(this).select("circle").transition()
       .duration(750)
@@ -106,23 +99,41 @@ function update() {
     d3.select(this)
       .attr("opacity",1);
     this.currentRadius=30;
+
+    //console.log(d3.select(this));
+          link.each(function(d) { 
+            if(d.source.name === name || d.target.name === name){
+              d3.select(this).attr("opacity",1);
+              node.each(function(n) {
+            if(n.name === d.source.name || n.name === d.target.name)
+            {
+              d3.select(this).attr("opacity",1);
+            }
+          });
+          }
+      });
 }
 
   function mouseout() {
 
     var name = d3.select(this).text();
-
+    //node.attr("opacity",1);
     //console.log(d3.select(this));
           link.each(function(d) { 
             if(d.source.name === name || d.target.name === name){
               d3.select(this).attr("opacity",0.6);
+              node.each(function(n) {
+               if(n.name === d.source.name || n.name === d.target.name)
+            {
+              d3.select(this).attr("opacity",0.3);
+            }
+          });
           }
       });
 
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
-    node.attr("opacity",1);
 }
 
 
