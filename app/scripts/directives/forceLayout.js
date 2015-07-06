@@ -36,6 +36,7 @@ scope.$watch('url', function(newval, oldval){
   if (error) throw error;
   console.log(json);
   root = json;
+  //redraw
   update();
 });
 });
