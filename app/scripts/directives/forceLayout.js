@@ -16,130 +16,130 @@ app.directive('forceLayout', function() {
       .attr({width: width, height: height});
 
 
-var force = d3.layout.force()
-    .linkDistance(80)
-    .charge(-120)
-    .gravity(0.05)
-    .size([width, height])
-    .on("tick", tick);
+    var force = d3.layout.force()
+      .linkDistance(80)
+      .charge(-120)
+      .gravity(0.05)
+      .size([width, height])
+      .on("tick", tick);
 
-var link = svg.selectAll(".link"),
-    node = svg.selectAll(".node");
+    var link = svg.selectAll(".link"),
+      node = svg.selectAll(".node");
 
-scope.$watch('url', function(newval, oldval){
-  console.log('url changed');
-  console.log('new url',newval);
-  console.log('old url',oldval);
-  d3.json(newval, function(error, json) {
-    if (error) throw error;
-    //console.log(json);
-    root = json;
-    //redraw
-    update();
-  });
-});
+    scope.$watch('url', function(newval, oldval){
+      console.log('url changed');
+      console.log('new url',newval);
+      console.log('old url',oldval);
+      d3.json(newval, function(error, json) {
+        if (error) throw error;
+        //console.log(json);
+        root = json;
+        //redraw
+        update();
+      });
+    });
 
-function update() {
-  var nodes = flatten(root),
+    function update() {
+      var nodes = flatten(root),
       links = d3.layout.tree().links(nodes);
 
-     // console.log(links);
-     // console.log(nodes);
+       // console.log(links);
+       // console.log(nodes);
 
-  // Update links.
-  link = link.data(links, function(d) { return d.target.id; });
+    // Update links.
+      link = link.data(links, function(d) { return d.target.id; });
 
-  link.exit().remove();
+      link.exit().remove();
 
-  var linkEnter = link.enter().insert("line", ".node")
-      .attr("class", "link")
-      .attr("opacity", 0.4);
+      var linkEnter = link.enter().insert("line", ".node")
+        .attr("class", "link")
+        .attr("opacity", 0.4);
 
-  // Update nodes.
-  node = node.data(nodes, function(d) { return d.id; });
+    // Update nodes.
+      node = node.data(nodes, function(d) { return d.id; });
 
-  node.exit().remove();
+      node.exit().remove();
 
-  var nodeEnter = node.enter().append("g")
-      .attr("class", "node")
-      .attr("opacity",0.4)
-      .on("click", click)
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseout)
-      .call(force.drag);
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("opacity",0.4)
+        .on("click", click)
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout)
+        .call(force.drag);
 
-  nodeEnter.append("circle")
-      .attr("r", function(d) { return Math.sqrt(d.size) / 9 || 15; });
-     
-  nodeEnter.append("text")
-      .attr("dy", "-1.3em")
-      .style("fill","gray")
-      .text(function(d) { 
-        setText(this, d.name);
-        return d.name; 
-      });
+    nodeEnter.append("circle")
+        .attr("r", function(d) { return Math.sqrt(d.size) / 9 || 15; });
+       
+    nodeEnter.append("text")
+        .attr("dy", "-1.3em")
+        .style("fill","gray")
+        .text(function(d) { 
+          setText(this, d.name);
+          return d.name; 
+        });
 
-  // Restart the force layout.
-  force
-    .nodes(nodes)
-    .links(links)
-    .start();
+    // Restart the force layout.
+    force
+      .nodes(nodes)
+      .links(links)
+      .start();
 
 
-//console.log(nodes);
+  //console.log(nodes);
 
-  function mouseover() {
-    var selected = d3.select(this);
-    if(!this.oldRadius)
-      this.oldRadius = selected.select("circle")[0][0].r.baseVal.value;
+    function mouseover() {
+      var selected = d3.select(this);
+      if(!this.oldRadius)
+        this.oldRadius = selected.select("circle")[0][0].r.baseVal.value;
+        var name = selected.text();
+  //console.log(this.oldRadius);
+  //    node.attr("opacity",0.5);
+
+      selected.select("circle").transition()
+        .duration(750)
+        .attr("r", 30)
+        .attr("opacity",1);
+
+      this.currentRadius=30;
+
+      //console.log(d3.select(this));
+      link.each(function(d) { 
+        if(d.source.name === name || d.target.name === name) {
+            d3.select(this).attr("opacity",1);
+            node.each(function(n) {
+              if(n.name === d.source.name || n.name === d.target.name)
+                {
+                  d3.select(this).attr("opacity",1);
+                }
+              });
+            }
+        });
+      }
+
+    function mouseout() {
+      var selected = d3.select(this);
       var name = selected.text();
-//console.log(this.oldRadius);
-//    node.attr("opacity",0.5);
-
-    selected.select("circle").transition()
-      .duration(750)
-      .attr("r", 30)
-      .attr("opacity",1);
-    this.currentRadius=30;
-
-    //console.log(d3.select(this));
-          link.each(function(d) { 
-            if(d.source.name === name || d.target.name === name){
-              d3.select(this).attr("opacity",1);
-              node.each(function(n) {
-            if(n.name === d.source.name || n.name === d.target.name)
-            {
-              d3.select(this).attr("opacity",1);
-            }
-          });
-          }
-      });
-}
-
-  function mouseout() {
-    var selected = d3.select(this);
-    var name = selected.text();
-    //node.attr("opacity",1);
-    //console.log(d3.select(this));
-          link.each(function(d) { 
-            if(d.source.name === name || d.target.name === name){
-              d3.select(this).attr("opacity",0.6);
-              node.each(function(n) {
-               if(n.name === d.source.name || n.name === d.target.name)
-            {
+      //node.attr("opacity",1);
+      //console.log(d3.select(this));
+      link.each(function(d) { 
+        if(d.source.name === name || d.target.name === name){
+          d3.select(this).attr("opacity",0.6);
+          node.each(function(n) {
+          if(n.name === d.source.name || n.name === d.target.name) {
               d3.select(this).attr("opacity",0.5);
-            }
-          });
           }
+        });
+       }
       });
 
-    selected.select("circle").transition()
+      selected.select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
-}
+    }
 
 
-  function setText(textElmt,str) {
+    function setText(textElmt,str) {
      textElmt.textContent = str;
      var box = textElmt.getBBox();
      var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -149,13 +149,13 @@ function update() {
 
      for (var n in box) { rect.setAttribute(n,box[n]); }
      textElmt.parentNode.insertBefore(rect,textElmt);
-}
+    }
 
-  node.select("circle")
+    node.select("circle")
       .transition()
       .duration(700)
       .style("fill", color);
-}
+  }
 
 function tick() {
   link
