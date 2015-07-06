@@ -53,7 +53,7 @@ app.directive('forceLayout', function() {
 
       var linkEnter = link.enter().insert("line", ".node")
         .attr("class", "link")
-        .attr("opacity", 0.4);
+        .attr("opacity", 0.6);
 
     // Update nodes.
       node = node.data(nodes, function(d) { return d.id; });
@@ -62,7 +62,7 @@ app.directive('forceLayout', function() {
 
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
-        .attr("opacity",0.4)
+        .attr("opacity",0.6)
         .on("click", click)
         .on("mouseover", mouseover)
         .on("mouseout", mouseout)
