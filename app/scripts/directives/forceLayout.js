@@ -43,12 +43,15 @@ function update() {
   var nodes = flatten(root),
       links = d3.layout.tree().links(nodes);
 
+     // console.log(links);
+     // console.log(nodes);
+
   // Update links.
   link = link.data(links, function(d) { return d.target.id; });
 
   link.exit().remove();
 
-  link.enter().insert("line", ".node")
+  var linkEnter = link.enter().insert("line", ".node")
       .attr("class", "link");
 
   // Update nodes.
@@ -80,12 +83,23 @@ function update() {
     .links(links)
     .start();
 
+
+//console.log(nodes);
+
   function mouseover() {
     if(!this.oldRadius)
       this.oldRadius = d3.select(this).select("circle")[0][0].r.baseVal.value;
-    console.log(this.oldRadius);
+      var name = d3.select(this).text();
+
+    //console.log(d3.select(this));
+          link.each(function(d) { 
+            if(d.source.name === name || d.target.name === name){
+              d3.select(this).attr("opacity",1);
+          }
+      });
+    //console.log(this.oldRadius);
     node.attr("opacity",0.5);
-    console.log(d3.select(this));
+
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", 30);
@@ -95,6 +109,16 @@ function update() {
 }
 
   function mouseout() {
+
+    var name = d3.select(this).text();
+
+    //console.log(d3.select(this));
+          link.each(function(d) { 
+            if(d.source.name === name || d.target.name === name){
+              d3.select(this).attr("opacity",0.3);
+          }
+      });
+
     d3.select(this).select("circle").transition()
       .duration(750)
       .attr("r", this.oldRadius);
@@ -163,5 +187,6 @@ function flatten(root) {
   recurse(root);
   return nodes;
 }
+
 }
 });
