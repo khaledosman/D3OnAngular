@@ -49,7 +49,7 @@ app.directive('forceLayout', function() {
     // Update links.
       link = link.data(links, function(d) { return d.target.id; });
 
-      link.exit().transition().duration(600).remove();
+      link.exit().transition().duration(400).remove();
 
       var linkEnter = link.enter().insert("line", ".node")
         .attr("class", "link")
@@ -58,7 +58,7 @@ app.directive('forceLayout', function() {
     // Update nodes.
       node = node.data(nodes, function(d) { return d.id; });
 
-      node.exit().transition().duration(600).remove();
+      node.exit().transition().duration(400).remove();
 
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
