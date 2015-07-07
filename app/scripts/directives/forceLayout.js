@@ -34,15 +34,37 @@ app.directive('forceLayout', function() {
         if (error) throw error;
         //console.log(json);
         root = json;
+
+      var nodes = flatten(root),
+      links = d3.layout.tree().links(nodes);
         //redraw
         update();
       });
     });
 
-    function update() {
-      var nodes = flatten(root),
-      links = d3.layout.tree().links(nodes);
+setTimeout(function(){
+      var newNode = 
+      {
+        "name":"new node",
+        "index":2,
+        "id":31,
+        "children":[],
+        "x":500,
+        "y":500,
+        "px":500,
+        "py":500,
+        "fixed":0,
+        "weight":1
+      };
+      nodes.push(newNode);
+      console.log(nodes);
+      update();
+    }, 3000);
 
+    function update() {
+      nodes = flatten(root);
+      links = d3.layout.tree().links(nodes);
+      console.log(nodes);
        // console.log(links);
        // console.log(nodes);
 
@@ -79,31 +101,43 @@ app.directive('forceLayout', function() {
           return d.name; 
         });
 
+   function setText(textElmt,str) {
+       textElmt.textContent = str;
+       var box = textElmt.getBBox();
+       var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+       //rect.style("fill","red");
+       rect.setAttribute('fill','white');
+       rect.setAttribute("border", "1px solid #cccccc");
+
+       for (var n in box) { rect.setAttribute(n,box[n]); }
+       textElmt.parentNode.insertBefore(rect,textElmt);
+      }
+
     // Restart the force layout.
     force
       .nodes(nodes)
       .links(links)
       .start();
 
+    node.select("circle")
+      .transition()
+      .duration(700)
+      .style("fill", color);
+  }
 
-  //console.log(nodes);
-
-    function mouseover() {
+  function mouseover() {
       var selected = d3.select(this);
       if(!this.oldRadius)
         this.oldRadius = selected.select("circle")[0][0].r.baseVal.value;
-        var name = selected.text();
-  //console.log(this.oldRadius);
-  //    node.attr("opacity",0.5);
+      var name = selected.text();
 
       selected.select("circle").transition()
         .duration(750)
         .attr("r", 30)
         .attr("opacity",1);
 
-      this.currentRadius=30;
+      this.currentRadius = 30;
 
-      //console.log(d3.select(this));
       link.each(function(d) { 
         if(d.source.name === name || d.target.name === name) {
             d3.select(this).attr("opacity",1);
@@ -120,8 +154,7 @@ app.directive('forceLayout', function() {
     function mouseout() {
       var selected = d3.select(this);
       var name = selected.text();
-      //node.attr("opacity",1);
-      //console.log(d3.select(this));
+
       link.each(function(d) { 
         if(d.source.name === name || d.target.name === name){
           d3.select(this).attr("opacity",0.6);
@@ -138,34 +171,15 @@ app.directive('forceLayout', function() {
       .attr("r", this.oldRadius);
     }
 
-
-    function setText(textElmt,str) {
-     textElmt.textContent = str;
-     var box = textElmt.getBBox();
-     var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
-     //rect.style("fill","red");
-     rect.setAttribute('fill','white');
-     rect.setAttribute("border", "1px solid #cccccc");
-
-     for (var n in box) { rect.setAttribute(n,box[n]); }
-     textElmt.parentNode.insertBefore(rect,textElmt);
-    }
-
-    node.select("circle")
-      .transition()
-      .duration(700)
-      .style("fill", color);
-  }
-
 function tick() {
   link
     .attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
     .attr("x2", function(d) { return d.target.x; })
-    .attr("y2", function(d) { return d.target.y; })
+    .attr("y2", function(d) { return d.target.y; });
 
   node
-    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 }
 
 function color(d) {
