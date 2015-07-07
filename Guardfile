@@ -16,5 +16,5 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 guard 'livereload' do
-  watch %r{^.*\.(html|css|js|png|jpg|)$}
+  watch %r{^.*\.(html|css|js|png|jpg|json)$}
 end
