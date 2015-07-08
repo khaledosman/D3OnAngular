@@ -12,7 +12,8 @@
 <script src="app/scripts/directives/donutChart.js"></script>
 <script src="app/scripts/controllers/treeLayoutController.js"></script>
 <script src="app/scripts/directives/treeLayout.js"></script>
-
+<script src="app/scripts/controllers/forceLayoutController.js"></script>
+<script src="app/scripts/directives/forceLayout.js"></script>
 <body ng-app="myApp">
 
 <!--
@@ -26,5 +27,12 @@
     <tree-layout url="shared.url" tree-layout>
   </div>
 
+
+<!--
+<div ng-controller = "forceLayoutController">
+<p>{{shared.url}}</p>
+<force-layout url="shared.url" width="1280" height="720"></force-layout>
+</div>
+-->
 
 </body>

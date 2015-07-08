@@ -4,10 +4,10 @@ app.directive('treeLayout', function() {
   return {
     scope: { 'url': '=', 'onClick': '&' },
     restrict: 'E',
-    link: link
+    link: linkFn
   };
 
-  function link(scope, element, attr) {
+  function linkFn(scope, element, attr) {
     var el = element[0];
     var width = el.clientWidth;
     var height = el.clientHeight;
@@ -37,6 +37,7 @@ app.directive('treeLayout', function() {
 
       var nodes = flatten(root),
       links = d3.layout.tree().links(nodes);
+      console.log(nodes);
         //redraw
         update();
       });
@@ -45,7 +46,7 @@ app.directive('treeLayout', function() {
     function update() {
       nodes = flatten(root);
       links = d3.layout.tree().links(nodes);
-      console.log(nodes);
+      //console.log(nodes);
        // console.log(links);
        // console.log(nodes);
 
