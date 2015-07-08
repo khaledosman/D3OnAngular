@@ -10,8 +10,8 @@
 <link rel="stylesheet" type="text/css" href="app/styles/main.css">
 <script src="app/scripts/controllers/donutChartController.js"></script>
 <script src="app/scripts/directives/donutChart.js"></script>
-<script src="app/scripts/controllers/forceLayoutController.js"></script>
-<script src="app/scripts/directives/forceLayout.js"></script>
+<script src="app/scripts/controllers/treeLayoutController.js"></script>
+<script src="app/scripts/directives/treeLayout.js"></script>
 
 <body ng-app="myApp">
 
@@ -21,9 +21,9 @@
  </div> -->
  
 
-  <div ng-controller="forceLayoutController">
+  <div ng-controller="treeLayoutController">
   <p>{{shared.url}}</p>
-    <force-layout url="shared.url" force-layout>
+    <tree-layout url="shared.url" tree-layout>
   </div>
 
 
