@@ -4,7 +4,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
     scope: { 'url': '=', 'onClick': '&' },
     restrict: 'E',
     link: linkFn,
-    template: '<button ng-click = removeAllNodes()>remove all nodes </button><button ng-click = removeallLinks()>remove all links </button><button ng-click = removeNode()>remove node </button> <button ng-click = addNode()>Add node </button><button ng-click = addLink()>Add Link </button>'
+    templateUrl: 'app/scripts/partials/forceGraphButtons.html'
   };
 
   function linkFn(scope, element, attr) {
@@ -25,7 +25,17 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
             update();
         };
 
-        scope.removeNode = function (id) {
+
+		//adjust threshold
+		scope.setThreshold = function(thresh) {
+		    links.splice(0, links.length);
+				for (var i = 0; i < graphRec.links.length; i++) {
+					if (graphRec.links[i].value > thresh) {links.push(graphRec.links[i]);}
+				}
+			 update();
+			};
+
+		scope.removeNode = function (id) {
             var i = 0;
             var n = scope.findNode(id);
             while (i < links.length) {
@@ -48,7 +58,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
             update();
         };
 
-        scope.removeallLinks = function () {
+        scope.removeAllLinks = function () {
             links.splice(0, links.length);
             update();
         };
@@ -79,7 +89,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
         };
 
 
-//---Insert-------
+
 var node_drag = d3.behavior.drag()
         .on("dragstart", dragstart)
         .on("drag", dragmove)
@@ -105,10 +115,6 @@ var node_drag = d3.behavior.drag()
         d.fixed = false; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
         //force.resume();
     }
-
-
-//---End Insert------
-
 
 
   	//Constants for the SVG
@@ -141,7 +147,7 @@ var node_drag = d3.behavior.drag()
 		d3.json(newval, function(error , json){
 			if(error) throw error;
 			root = json;	
-			console.log(root);
+			graphRec = root;
 			update();
 		});
 	});
@@ -161,10 +167,8 @@ var node_drag = d3.behavior.drag()
     */
 
 	var update = function() {
-		console.log(root);
 		this.nodes = root.nodes;
 		this.links = root.links;
-		console.log(nodes);
 	//Create all the line svgs but without locations yet
 	var link = svg.selectAll(".link")
 	    .data(links);
@@ -198,7 +202,7 @@ var node_drag = d3.behavior.drag()
 
 	node.exit().remove();
 
-			//---Insert-------
+			
 	var markers = svg.selectAll("marker")
 			    .data(["arrow"]);
 
@@ -214,7 +218,7 @@ var node_drag = d3.behavior.drag()
 			    .attr("d", "M0,-5L12,0L0,5 L10,0 L0, -5")
 			    .style("stroke", "#4679BD")
 			    .style("opacity", "0.6");
-			//---End Insert---
+			
 			markers.exit().remove();
 
 
