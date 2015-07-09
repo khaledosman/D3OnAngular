@@ -12,26 +12,21 @@ app.directive('forceLayout', function() {
 	var width = attr.width,
     height = attr.height;
 
-    console.log(attr);
-	//Constants for the SVG
-//	var width = 500,
-//	    height = 500;
-
 	//Set up the colour scale
 	var color = d3.scale.category20();
 
 	//Set up the force layout
 	var force = d3.layout.force()
 	    .charge(-120)
-	    .linkDistance(30)
+	    .linkDistance(80)
 	    .size([width, height]);
 
-	//Append a SVG to the body of the html page. Assign this SVG as an object to svg
+	//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 	var svg = d3.select(el).append("svg")
 	    .attr("width", width)
 	    .attr("height", height);
 
-	//Read the data from the mis element 
+	//Read the data from the json file 
 	d3.json('graph2.json', function(error , json){
 		if(error) throw error;
 		var graph = json;	
@@ -45,9 +40,7 @@ app.directive('forceLayout', function() {
 	    .data(graph.links)
 	    .enter().append("line")
 	    .attr("class", "link")
-	    .style("stroke-width", function (d) {
-	    return Math.sqrt(d.value);
-	});
+    	.style("marker-end",  "url(#licensing)"); //Added 
 
 	//Do the same with the circles for the nodes - no 
 	var node = svg.selectAll(".node")
@@ -82,11 +75,25 @@ app.directive('forceLayout', function() {
 	        return d.y;
 	    });
 	});
+
+		//---Insert-------
+var markers= svg.append("defs").selectAll("marker")
+			    .data(["suit", "licensing", "resolved"])
+			  .enter().append("marker")
+			    .attr("id", function(d) { return d; })
+			    .attr("viewBox", "0 -5 10 10")
+			    .attr("refX", 19)
+			    .attr("refY", 0)
+			    .attr("markerWidth", 6)
+			    .attr("markerHeight", 6)
+			    .attr("orient", "auto")
+			  .append("path")
+			    .attr("d", "M0,-5L12,0L0,5 L10,0 L0, -5")
+			    .style("stroke", "#4679BD")
+			    .style("opacity", "0.6");
+			//---End Insert---
+
 	});
-
-	
-
-
 
 }
 
