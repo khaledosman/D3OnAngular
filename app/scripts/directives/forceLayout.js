@@ -64,7 +64,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
         var findNode = function (id) {
             for (var i in nodes) {
-                if (nodes[i]["id"] === id) return nodes[i];
+                if (nodes[i].id === id) return nodes[i];
             }
             
         };
@@ -99,6 +99,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 	//this.nodes= force.nodes();
 	//this.links = force.links();
+
+	
 	scope.$watch('url', function(newval, oldval) {
 		//Read the data from the json file 
 		console.log('new url',newval);
@@ -110,6 +112,20 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			update();
 		});
 	});
+
+/*
+   // Browser onresize event
+          window.onresize = function() {
+            scope.$apply();
+          };
+
+
+    scope.$watch(function() {
+            return el.innerWidth;
+          }, function() {
+            update();
+          });
+    */
 
 	var update = function() {
 		console.log(root);
