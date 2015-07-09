@@ -4,7 +4,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
     scope: { 'url': '=', 'onClick': '&' },
     restrict: 'E',
     link: linkFn,
-    template: '<button ng-click = removeAllNodes()>remove all nodes </button><button ng-click = removeallLinks()>remove all links </button><button ng-click = removeNode()>remove node </button> <button ng-click = addNode()>Add node </button>'
+    template: '<button ng-click = removeAllNodes()>remove all nodes </button><button ng-click = removeallLinks()>remove all links </button><button ng-click = removeNode()>remove node </button> <button ng-click = addNode()>Add node </button><button ng-click = addLink()>Add Link </button>'
   };
 
   function linkFn(scope, element, attr) {
@@ -59,7 +59,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
         };
 
         scope.addLink = function (source, target, value) {
-            links.push({"source": findNode(source), "target": findNode(target), "value": value});
+            links.push({"source": scope.findNode(source), "target": scope.findNode(target), "value": value});
             update();
         };
 
@@ -79,6 +79,38 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
         };
 
 
+//---Insert-------
+var node_drag = d3.behavior.drag()
+        .on("dragstart", dragstart)
+        .on("drag", dragmove)
+        .on("dragend", dragend);
+
+    function dragstart(d, i) {
+       // force.stop() // stops the force auto positioning before you start dragging
+    }
+
+    function dragmove(d, i) {
+        d.px += d3.event.dx;
+        d.py += d3.event.dy;
+        d.x += d3.event.dx;
+        d.y += d3.event.dy; 
+    }
+
+    function dragend(d, i) {
+        d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+        force.resume();
+    }
+
+    function releasenode(d) {
+        d.fixed = false; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+        //force.resume();
+    }
+
+
+//---End Insert------
+
+
+
   	//Constants for the SVG
   	var el = element[0];
 	var width = attr.width,
@@ -86,7 +118,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 	//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 	var svg = d3.select(el).append("svg")
-	    .attr("width", width)
+	    .style("width", "100%")
 	    .attr("height", height);
 
 	//Set up the colour scale
@@ -160,7 +192,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 	    .style("fill", function (d) {
 	    return color(d.group);
 	})
-	    .call(force.drag);
+	    .call(force.drag)
+	    .on('dblclick', releasenode)
+		.call(node_drag); //Added
 
 	node.exit().remove();
 
