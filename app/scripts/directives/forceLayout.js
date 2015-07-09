@@ -8,6 +8,7 @@ app.directive('forceLayout', function() {
 
   function linkFn(scope, element, attr) {
 
+  	(function myGraph(){
         // Add and remove elements on the graph object
         this.addNode = function (id) {
             nodes.push({"id": id});
@@ -87,22 +88,25 @@ app.directive('forceLayout', function() {
 	    .linkDistance(80)
 	    .size([width, height]);
 
+	this.nodes= force.nodes();
+	this.links = force.links();
 	scope.$watch('url', function(newval, oldval) {
 		//Read the data from the json file 
 		console.log('new url',newval);
       	console.log('old url',oldval);
 		d3.json(newval, function(error , json){
 			if(error) throw error;
-			var root = json;	
+			this.root = json;	
 			console.log(root);
-			update(root);
+			update();
 		});
 	});
 
-	var update = function(root) {
-		var nodes = root.nodes;
-		var links = root.links;
-
+	var update = function() {
+		console.log(root);
+		this.nodes = root.nodes;
+		this.links = root.links;
+		console.log(nodes);
 	//Create all the line svgs but without locations yet
 	var link = svg.selectAll(".link")
 	    .data(links);
@@ -183,7 +187,14 @@ app.directive('forceLayout', function() {
 		.gravity(0.01)
 		.friction(0)
 	    .start();
+
+
 };
+})();
+
+setInterval(function(){
+	removeNode();
+}, 200);
 
 }
 
