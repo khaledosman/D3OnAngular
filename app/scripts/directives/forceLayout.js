@@ -1,4 +1,4 @@
-app.directive('forceLayout', function() {
+app.directive('forceLayout', ['d3Service', function(d3Service) {
 
  return {
     scope: { 'url': '=', 'onClick': '&' },
@@ -7,10 +7,19 @@ app.directive('forceLayout', function() {
   };
 
   function linkFn(scope, element, attr) {
+  	d3Service.d3().then(function(d3) {
+	var graph = new Graph(scope,element,attr);
+    // Add and remove elements on the graph object
 
+	 setInterval(function(){
+	 	if(nodes.length !== 0)
+		graph.removeNode();
+	}, 200); 
+ });
+     }
 
-        // Add and remove elements on the graph object
-        this.addNode = function (id) {
+     function Graph(scope,element,attr) {
+     	   this.addNode = function (id) {
             nodes.push({"id": id});
             update();
         };
@@ -116,7 +125,7 @@ app.directive('forceLayout', function() {
 	   /* .attr("stroke-width", function(d) {
 	    	return d.value / 10;
 	    })*/
-    	.style("marker-end",  "url(#suit)"); //Added 
+    	.style("marker-end",  "url(#arrow)"); //Added 
     	 /*link.append("title")
                     .text(function (d) {
                         return d.value;
@@ -140,7 +149,7 @@ app.directive('forceLayout', function() {
 
 			//---Insert-------
 	var markers = svg.selectAll("marker")
-			    .data(["suit"]);
+			    .data(["arrow"]);
 
 			  markers.enter().append("marker")
 			    .attr("id", function(d) { return d; })
@@ -193,17 +202,13 @@ app.directive('forceLayout', function() {
 
 };
 
-/*
- setInterval(function(){
-	removeNode();
-}, 200); 
- */
 
-
-setTimeout(function(){
+/*setTimeout(function(){
 	removeallLinks();
 }, 5000);
+*/
 
-}
 
-});
+     }
+
+}]);
