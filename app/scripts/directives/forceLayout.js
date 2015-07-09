@@ -8,7 +8,7 @@ app.directive('forceLayout', function() {
 
   function linkFn(scope, element, attr) {
 
-  	(function myGraph(){
+
         // Add and remove elements on the graph object
         this.addNode = function (id) {
             nodes.push({"id": id});
@@ -88,15 +88,15 @@ app.directive('forceLayout', function() {
 	    .linkDistance(80)
 	    .size([width, height]);
 
-	this.nodes= force.nodes();
-	this.links = force.links();
+	//this.nodes= force.nodes();
+	//this.links = force.links();
 	scope.$watch('url', function(newval, oldval) {
 		//Read the data from the json file 
 		console.log('new url',newval);
       	console.log('old url',oldval);
 		d3.json(newval, function(error , json){
 			if(error) throw error;
-			this.root = json;	
+			root = json;	
 			console.log(root);
 			update();
 		});
@@ -116,7 +116,7 @@ app.directive('forceLayout', function() {
 	   /* .attr("stroke-width", function(d) {
 	    	return d.value / 10;
 	    })*/
-    	.style("marker-end",  "url(#licensing)"); //Added 
+    	.style("marker-end",  "url(#suit)"); //Added 
     	 /*link.append("title")
                     .text(function (d) {
                         return d.value;
@@ -126,7 +126,7 @@ app.directive('forceLayout', function() {
 
 	//Do the same with the circles for the nodes - no 
 	var node = svg.selectAll(".node")
-	    .data(nodes)
+	    .data(nodes);
 	    
 	var nodeEnter = node.enter().append("circle")
 	    .attr("class", "node")
@@ -139,9 +139,10 @@ app.directive('forceLayout', function() {
 	node.exit().remove();
 
 			//---Insert-------
-	var markers = svg.append("defs").selectAll("marker")
-			    .data(["suit", "licensing", "resolved"])
-			  .enter().append("marker")
+	var markers = svg.selectAll("marker")
+			    .data(["suit"]);
+
+			  markers.enter().append("marker")
 			    .attr("id", function(d) { return d; })
 			    .attr("viewBox", "0 -5 10 10")
 			    .attr("refX", 19)
@@ -154,6 +155,7 @@ app.directive('forceLayout', function() {
 			    .style("stroke", "#4679BD")
 			    .style("opacity", "0.6");
 			//---End Insert---
+			markers.exit().remove();
 
 
 
@@ -190,11 +192,17 @@ app.directive('forceLayout', function() {
 
 
 };
-})();
 
-setInterval(function(){
+/*
+ setInterval(function(){
 	removeNode();
-}, 200);
+}, 200); 
+ */
+
+
+setTimeout(function(){
+	removeallLinks();
+}, 5000);
 
 }
 
