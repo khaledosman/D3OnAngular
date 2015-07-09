@@ -3,7 +3,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
  return {
     scope: { 'url': '=', 'onClick': '&' },
     restrict: 'E',
-    link: linkFn
+    link: linkFn,
+    template: '<button ng-click = removeAllNodes()>remove all nodes </button><button ng-click = removeallLinks()>remove all links </button><button ng-click = removeNode()>remove node </button> <button ng-click = addNode()>Add node </button>'
   };
 
   function linkFn(scope, element, attr) {
@@ -11,33 +12,33 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 	var graph = new Graph(scope,element,attr);
     // Add and remove elements on the graph object
 
-	 setInterval(function(){
+	 /* setInterval(function(){
 	 	if(nodes.length !== 0)
-		graph.removeNode();
-	}, 200); 
+			scope.removeNode();
+	}, 200); */
  });
      }
 
      function Graph(scope,element,attr) {
-     	   this.addNode = function (id) {
+     	   scope.addNode = function (id) {
             nodes.push({"id": id});
             update();
         };
 
-        this.removeNode = function (id) {
+        scope.removeNode = function (id) {
             var i = 0;
-            var n = findNode(id);
+            var n = scope.findNode(id);
             while (i < links.length) {
                 if ((links[i].source == n) || (links[i].target == n)) {
                     links.splice(i, 1);
                 }
                 else i++;
             }
-            nodes.splice(findNodeIndex(id), 1);
+            nodes.splice(scope.findNodeIndex(id), 1);
             update();
         };
 
-        this.removeLink = function (source, target) {
+        scope.removeLink = function (source, target) {
             for (var i = 0; i < links.length; i++) {
                 if (links[i].source.id == source && links[i].target.id == target) {
                     links.splice(i, 1);
@@ -47,29 +48,29 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
             update();
         };
 
-        this.removeallLinks = function () {
+        scope.removeallLinks = function () {
             links.splice(0, links.length);
             update();
         };
 
-        this.removeAllNodes = function () {
-            nodes.splice(0, links.length);
+        scope.removeAllNodes = function () {
+            nodes.splice(0, nodes.length);
             update();
         };
 
-        this.addLink = function (source, target, value) {
+        scope.addLink = function (source, target, value) {
             links.push({"source": findNode(source), "target": findNode(target), "value": value});
             update();
         };
 
-        var findNode = function (id) {
+        scope.findNode = function (id) {
             for (var i in nodes) {
                 if (nodes[i].id === id) return nodes[i];
             }
             
         };
 
-        var findNodeIndex = function (id) {
+        scope.findNodeIndex = function (id) {
             for (var i = 0; i < nodes.length; i++) {
                 if (nodes[i].id == id) {
                     return i;
