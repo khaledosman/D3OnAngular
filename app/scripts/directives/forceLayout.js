@@ -63,7 +63,7 @@ function restart() {
 		}
 
 		function connectedNodes() {
-	if(toggle == 0) {
+	//if(toggle === 0) {
       var selected = d3.select(this);
 			  var name = selected.text();
 			  console.log(name);
@@ -83,14 +83,21 @@ function restart() {
 		                   toggle = 1;
                console.log("toggle",toggle);
 
-      }
-      else {
+     // }
+    /*  else {
       	        //Put them back to opacity=1
         node.attr("opacity", 1);
         link.attr("opacity", 1);
         toggle = 0;
         console.log("toggle",toggle);
-      }
+      }*/
+  }
+
+  function mouseout() {
+  	  node.attr("opacity", 1);
+        link.attr("opacity", 1);
+        toggle = 0;
+        console.log("toggle",toggle);
   }
 
 		
@@ -269,7 +276,8 @@ var node_drag = d3.behavior.drag()
 	})
 	    .call(force.drag)
 	    .on('dblclick', releasenode)
-	    .on('click', connectedNodes)
+	    .on('mouseover', connectedNodes)
+	    .on('mouseout', mouseout)
 		.call(node_drag); //Added
 
 		 nodeEnter.append("text")
