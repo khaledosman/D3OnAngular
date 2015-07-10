@@ -45,7 +45,62 @@ function restart() {
 	node = node.data(nodes);
 	node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
 	force.start();
-}
+}		
+
+		//Toggle stores whether the highlighting is on
+		var toggle = 0;
+		//Create an array logging what is connected to what
+		var linkedByIndex = {};
+		for (i = 0; i < nodes.length; i++) {
+		    linkedByIndex[i + "," + i] = 1;
+		}
+		links.forEach(function (d) {
+		    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+		});
+		//This function looks up whether a pair are neighbours
+		function neighboring(a, b) {
+		    return linkedByIndex[a.index + "," + b.index];
+		}
+
+		function connectedNodes() {
+	if(toggle == 0) {
+      var selected = d3.select(this);
+			  var name = selected.text();
+			  console.log(name);
+		    link.each(function(d) { 
+        if(d.source.name === name || d.target.name === name) {
+            d3.select(this).attr("opacity",0.5);
+            node.each(function(n) {
+              if(n.name === d.source.name || n.name === d.target.name)
+                {
+                	//console.log(n.name);
+                  d3.select(this).attr("opacity",0.5);
+                }
+              });
+            }
+
+        });
+		                   toggle = 1;
+               console.log("toggle",toggle);
+
+      }
+      else {
+      	        //Put them back to opacity=1
+        node.attr("opacity", 1);
+        link.attr("opacity", 1);
+        toggle = 0;
+        console.log("toggle",toggle);
+      }
+  }
+
+		
+
+		scope.goCrazy = function() {
+			 setInterval(function(){
+		 	if(nodes.length !== 0)
+				scope.removeNode();
+		}, 100); 
+		};
 
 		scope.removeNode = function (id) {
             var i = 0;
@@ -214,7 +269,29 @@ var node_drag = d3.behavior.drag()
 	})
 	    .call(force.drag)
 	    .on('dblclick', releasenode)
+	    .on('click', connectedNodes)
 		.call(node_drag); //Added
+
+		 nodeEnter.append("text")
+        .attr("dy", "-1.3em")
+        .style("fill","gray")
+        .text(function(d) { 
+          setText(this, d.name);
+          return d.name; 
+        });
+
+ function setText(textElmt,str) {
+       textElmt.textContent = str;
+       var box = textElmt.getBBox();
+       var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+       //rect.style("fill","red");
+       rect.setAttribute('fill','white');
+       rect.setAttribute("border", "1px solid #cccccc");
+
+       for (var n in box) { rect.setAttribute(n,box[n]); }
+       textElmt.parentNode.insertBefore(rect,textElmt);
+      }
+
 
 	node.exit().remove();
 
