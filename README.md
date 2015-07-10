@@ -11,7 +11,7 @@ python -m SimpleHTTPServer 8000
 
 navigate to localhost:8000
 
-If you want to setup livereload for development use
-bundle exec guard
+If you want to setup livereload for development use:
+"bundle exec guard"
 then click on the livereload plugin from the browser, now the guard watches updates in your files
 and as soon as you press save page will automatically refresh.
