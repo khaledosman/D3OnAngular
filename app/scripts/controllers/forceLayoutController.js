@@ -1,6 +1,6 @@
 app.controller('forceLayoutController', function($scope, $timeout) {
 	$scope.shared = {
-		url: 'graph2.json'
+		url: 'graph3.json'
 	};
-	//$timeout(function() {$scope.shared.url = 'graph3.json';}, 2000);
+	//$timeout(function() {$scope.shared.url = 'graph2.json';}, 7000);
 });

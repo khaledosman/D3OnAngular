@@ -27,6 +27,23 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			update();
 		};
 
+		scope.searchNode = function searchNode(selectedVal) {
+			//find the node
+			console.log(selectedVal);
+			var node = svg.selectAll(".node");
+			if (selectedVal == "none") {
+				node.style("stroke", "white").style("stroke-width", "1");
+			} else {
+				var selected = node.filter(function(d, i) {
+					return d.name != selectedVal;
+				});
+				selected.style("opacity", "0");
+				link.style("opacity", "0");
+				d3.selectAll(".node, .link").transition()
+					.duration(10000)
+					.style("opacity", 1);
+			}
+		};
 		//adjust threshold
 		scope.setThreshold = function(thresh) {
 			links.splice(0, links.length);
@@ -57,7 +74,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//if(toggle === 0) {
 			var selected = d3.select(this);
 			var name = selected.text();
-			console.log(name);
+
 			link.attr("opacity", 0.3);
 			node.attr("opacity", 0.3);
 			link.each(function(d) {
@@ -66,7 +83,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					d3.select(this).attr("opacity", 1);
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
-							//console.log(n.name);
+
 							var self = d3.select(this);
 							self.attr("opacity", 1);
 						}
@@ -94,9 +111,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		scope.goCrazy = function() {
 			setInterval(function() {
-				if (nodes.length !== 0)
-					scope.removeNode();
+				scope.removeNode();
 			}, 100);
+
 		};
 
 		scope.removeNode = function(id) {
@@ -161,7 +178,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			.on("dragend", dragend);
 
 		function dragstart(d, i) {
-			 force.stop() // stops the force auto positioning before you start dragging
+			force.stop() // stops the force auto positioning before you start dragging
 		}
 
 		function dragmove(d, i) {
@@ -211,10 +228,10 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			console.log('old url', oldval);
 			d3.json(newval, function(error, json) {
 				if (error) throw error;
-				//	console.log("graph", json);
+
 				root = json;
 				graphRec = JSON.parse(JSON.stringify(root));
-				//	console.log("graphRec", graphRec);
+
 				nodes = root.nodes;
 				links = root.links;
 				update();
@@ -354,6 +371,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//Creates the graph data structure out of the json data
 			force.nodes(nodes)
 				.links(links)
+				.linkDistance(90)
 				.gravity(0.01)
 				.start();
 		};
