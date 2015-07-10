@@ -19,6 +19,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 	function Graph(scope, element, attr) {
 		var nodes = [],
 			links = [],
+			optArray = [],
 			link, node;
 		scope.addNode = function(id) {
 			nodes.push({
@@ -27,20 +28,24 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			update();
 		};
 
-		scope.searchNode = function searchNode(selectedVal) {
+
+		scope.searchNode = function searchNode() {
+
 			//find the node
+
+    	var selectedVal = document.getElementById('search').value;
 			console.log(selectedVal);
 			var node = svg.selectAll(".node");
 			if (selectedVal == "none") {
 				node.style("stroke", "white").style("stroke-width", "1");
 			} else {
 				var selected = node.filter(function(d, i) {
-					return d.name.toLowerCase() != selectedVal;
+					return d.name != selectedVal;
 				});
 				selected.style("opacity", "0");
 				link.style("opacity", "0");
 				d3.selectAll(".node, .link").transition()
-					.duration(10000)
+					.duration(5000)
 					.style("opacity", 1);
 			}
 		};
@@ -234,6 +239,17 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 				nodes = root.nodes;
 				links = root.links;
+
+				optArray = [];
+				for (var i = 0; i < nodes.length - 1; i++) {
+					optArray.push(nodes[i].name);
+				}
+				optArray = optArray.sort();
+				$(function() {
+					$("#search").autocomplete({
+						source: optArray
+					});
+				});
 				update();
 			});
 		});
