@@ -67,14 +67,17 @@ function restart() {
       var selected = d3.select(this);
 			  var name = selected.text();
 			  console.log(name);
+			  link.attr("opacity",0.5);
+			   node.attr("opacity",0.5);
 		    link.each(function(d) { 
         if(d.source.name === name || d.target.name === name) {
-            d3.select(this).attr("opacity",0.5);
+        	
+            d3.select(this).attr("opacity",1);
             node.each(function(n) {
               if(n.name === d.source.name || n.name === d.target.name)
                 {
                 	//console.log(n.name);
-                  d3.select(this).attr("opacity",0.5);
+                  d3.select(this).attr("opacity",1);
                 }
               });
             }
