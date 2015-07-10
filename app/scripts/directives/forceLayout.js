@@ -261,7 +261,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.attr("class", "node")
 				.call(force.drag)
 				.on('dblclick', releasenode)
-				.on('mouseover', connectedNodes)
+				.on('mouseover', mouseover)
 				.on('mouseout', mouseout)
 				.call(node_drag); //Added
 
