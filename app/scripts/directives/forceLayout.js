@@ -58,8 +58,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var selected = d3.select(this);
 			var name = selected.text();
 			console.log(name);
-			link.attr("opacity", 0.5);
-			node.attr("opacity", 0.5);
+			link.attr("opacity", 0.3);
+			node.attr("opacity", 0.3);
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 
@@ -276,7 +276,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var text = nodeEnter.append("text")
 				.attr("dy", "-1.3em")
 				.style("fill", "gray")
-				.attr("visibility", "hidden")
+				//.attr("visibility", "hidden")
 				.text(function(d) {
 					setText(this, d.name);
 					return d.name;

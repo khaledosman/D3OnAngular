@@ -1,4 +1,4 @@
-app.directive('treeLayout', function() {
+app.directive('treeLayout', ['d3Service', function(d3Service) {
 
   // isolate scope
   return {
@@ -8,6 +8,8 @@ app.directive('treeLayout', function() {
   };
 
   function linkFn(scope, element, attr) {
+    d3Service.d3().then(function(d3) {
+
     var el = element[0];
     var width = el.clientWidth;
     var height = el.clientHeight;
@@ -197,5 +199,6 @@ function flatten(root) {
   return nodes;
 }
 
-}
 });
+}
+}]);

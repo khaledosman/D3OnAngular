@@ -1,4 +1,4 @@
-app.directive('donutChart', function() {
+app.directive('donutChart', ['d3Service', function(d3Service) {
 
   // isolate scope
   return {
@@ -8,6 +8,7 @@ app.directive('donutChart', function() {
   };
 
   function link(scope, element) {
+    d3Service.d3().then(function(d3) {
     // the d3 bits
     var color = d3.scale.category10();
     var el = element[0];
@@ -76,5 +77,6 @@ app.directive('donutChart', function() {
         .each(function(d){ d.startAngle = 2 * PI - 0.001; d.endAngle = 2 * PI; })
         .attrTween('d', arcTween).remove();
     });
-  }
-});
+  });
+}
+}]);
