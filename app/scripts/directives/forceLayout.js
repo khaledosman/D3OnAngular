@@ -38,21 +38,10 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			update();
 		};
 
-
-		function restart() {
-
-			link = link.data(links);
-			link.exit().remove();
-			link.enter().insert("line", ".node").attr("class", "link");
-			node = node.data(nodes);
-			node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
-			force.start();
-		}
-
 		//Toggle stores whether the highlighting is on
-		var toggle = 0;
+		//var toggle = 0;
 		//Create an array logging what is connected to what
-		var linkedByIndex = {};
+		/*var linkedByIndex = {};
 		for (i = 0; i < nodes.length; i++) {
 			linkedByIndex[i + "," + i] = 1;
 		}
@@ -62,9 +51,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		//This function looks up whether a pair are neighbours
 		function neighboring(a, b) {
 			return linkedByIndex[a.index + "," + b.index];
-		}
+		}*/
 
-		function connectedNodes() {
+		function mouseover() {
 			//if(toggle === 0) {
 			var selected = d3.select(this);
 			var name = selected.text();
@@ -85,7 +74,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			});
 			toggle = 1;
-			//   console.log("toggle",toggle);
 
 			// }
 			/*  else {
@@ -93,7 +81,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			    node.attr("opacity", 1);
 			    link.attr("opacity", 1);
 			    toggle = 0;
-			    console.log("toggle",toggle);
 			  }*/
 		}
 
@@ -101,9 +88,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			node.attr("opacity", 1);
 			link.attr("opacity", 1);
 			toggle = 0;
-			// console.log("toggle",toggle);
 		}
-
 
 
 		scope.goCrazy = function() {
@@ -168,8 +153,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				}
 			}
 		};
-
-
 
 		var node_drag = d3.behavior.drag()
 			.on("dragstart", dragstart)
@@ -252,8 +235,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		    */
 
 		var update = function() {
-			//this.nodes = root.nodes;
-			//this.links = root.links;
+
 			//Create all the line svgs but without locations yet
 			link = svg.selectAll(".link")
 				.data(links);
@@ -374,13 +356,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.friction(0)
 				.start();
 		};
-
-
-		/*setTimeout(function(){
-			removeallLinks();
-		}, 5000);
-		*/
-
 
 	}
 
