@@ -84,7 +84,7 @@ function restart() {
 
         });
 		                   toggle = 1;
-               console.log("toggle",toggle);
+            //   console.log("toggle",toggle);
 
      // }
     /*  else {
@@ -100,7 +100,7 @@ function restart() {
   	  node.attr("opacity", 1);
         link.attr("opacity", 1);
         toggle = 0;
-        console.log("toggle",toggle);
+       // console.log("toggle",toggle);
   }
 
 		
@@ -223,10 +223,10 @@ var node_drag = d3.behavior.drag()
       	console.log('old url',oldval);
 		d3.json(newval, function(error , json){
 			if(error) throw error;
-			console.log("graph", json);
+		//	console.log("graph", json);
 			root = json;	
 			graphRec = JSON.parse(JSON.stringify(root));
-			console.log("graphRec", graphRec);
+		//	console.log("graphRec", graphRec);
 			nodes = root.nodes;
 			links = root.links;
 			update();
@@ -271,27 +271,30 @@ var node_drag = d3.behavior.drag()
 	 node = svg.selectAll(".node")
 	    .data(nodes);
 	    
-	var nodeEnter = node.enter().append("circle")
+	var nodeEnter = node.enter().append("g")
 	    .attr("class", "node")
-	    .attr("r", 8)
-	    .style("fill", function (d) {
-	    return color(d.group);
-	})
 	    .call(force.drag)
 	    .on('dblclick', releasenode)
 	    .on('mouseover', connectedNodes)
 	    .on('mouseout', mouseout)
 		.call(node_drag); //Added
 
-		 nodeEnter.append("text")
-        .attr("dy", "-1.3em")
-        .style("fill","gray")
-        .text(function(d) { 
-          setText(this, d.name);
-          return d.name; 
-        });
+	var circle = 
+	    nodeEnter.append("circle")
+		    .attr("r", 8)
+		    .style("fill", function (d) {
+		    return color(d.group);
+	});
 
- function setText(textElmt,str) {
+	var text = nodeEnter.append("text")
+		        .attr("dy", "-1.3em")
+		        .style("fill","gray")
+		        .text(function(d) { 
+		          setText(this, d.name);
+		          return d.name; 
+		        });
+
+ 	function setText(textElmt,str) {
        textElmt.textContent = str;
        var box = textElmt.getBBox();
        var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -343,12 +346,15 @@ var node_drag = d3.behavior.drag()
 	        return d.target.y;
 	    });
 
-	    node.attr("cx", function (d) {
+	    /*circle.attr("cx", function (d) {
 	        return d.x;
 	    })
 	        .attr("cy", function (d) {
 	        return d.y;
-	    });
+	    });*/
+
+	         node
+    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
 	});
 			//Creates the graph data structure out of the json data

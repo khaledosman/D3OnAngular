@@ -44,4 +44,8 @@ line.link {
   stroke-opacity: 0.7;
 }
 
+d3-tip {
+    line-height: 1;
+    color: black;
+}
 
