@@ -67,7 +67,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
 							//console.log(n.name);
-							d3.select(this).attr("opacity", 1);
+							var self = d3.select(this);
+							self.attr("opacity", 1);
 						}
 					});
 				}
@@ -275,6 +276,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var text = nodeEnter.append("text")
 				.attr("dy", "-1.3em")
 				.style("fill", "gray")
+				.attr("visibility", "hidden")
 				.text(function(d) {
 					setText(this, d.name);
 					return d.name;
@@ -285,7 +287,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				var box = textElmt.getBBox();
 				var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 				//rect.style("fill","red");
-				rect.setAttribute('fill', 'white');
+				rect.setAttribute('fill', 'transparent');
 				rect.setAttribute("border", "1px solid #cccccc");
 
 				for (var n in box) {
@@ -353,7 +355,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			force.nodes(nodes)
 				.links(links)
 				.gravity(0.01)
-				.friction(0)
 				.start();
 		};
 
