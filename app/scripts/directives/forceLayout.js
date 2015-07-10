@@ -33,7 +33,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			//find the node
 
-    	var selectedVal = document.getElementById('search').value;
+			var selectedVal = document.getElementById('search').value;
 			console.log(selectedVal);
 			var node = svg.selectAll(".node");
 			if (selectedVal == "none") {
