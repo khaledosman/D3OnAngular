@@ -161,7 +161,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			.on("dragend", dragend);
 
 		function dragstart(d, i) {
-			// force.stop() // stops the force auto positioning before you start dragging
+			 force.stop() // stops the force auto positioning before you start dragging
 		}
 
 		function dragmove(d, i) {
@@ -178,7 +178,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		function releasenode(d) {
 			d.fixed = false; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
-			//force.resume();
+			force.resume();
 		}
 
 
