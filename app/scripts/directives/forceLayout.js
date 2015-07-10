@@ -35,7 +35,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				node.style("stroke", "white").style("stroke-width", "1");
 			} else {
 				var selected = node.filter(function(d, i) {
-					return d.name != selectedVal;
+					return d.name.toLowerCase() != selectedVal;
 				});
 				selected.style("opacity", "0");
 				link.style("opacity", "0");
