@@ -20,6 +20,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
      }
 
      function Graph(scope,element,attr) {
+     	var nodes = [], links = [], link, node;
      	   scope.addNode = function (id) {
             nodes.push({"id": id});
             update();
@@ -34,6 +35,17 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				}
 			 update();
 			};
+
+
+function restart() {
+	
+	link = link.data(links);
+	link.exit().remove();
+	link.enter().insert("line", ".node").attr("class", "link");
+	node = node.data(nodes);
+	node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
+	force.start();
+}
 
 		scope.removeNode = function (id) {
             var i = 0;
@@ -146,8 +158,12 @@ var node_drag = d3.behavior.drag()
       	console.log('old url',oldval);
 		d3.json(newval, function(error , json){
 			if(error) throw error;
+			console.log("graph", json);
 			root = json;	
-			graphRec = root;
+			graphRec = JSON.parse(JSON.stringify(root));
+			console.log("graphRec", graphRec);
+			nodes = root.nodes;
+			links = root.links;
 			update();
 		});
 	});
@@ -167,10 +183,10 @@ var node_drag = d3.behavior.drag()
     */
 
 	var update = function() {
-		this.nodes = root.nodes;
-		this.links = root.links;
+		//this.nodes = root.nodes;
+		//this.links = root.links;
 	//Create all the line svgs but without locations yet
-	var link = svg.selectAll(".link")
+	 link = svg.selectAll(".link")
 	    .data(links);
 
 	    link.enter().append("line")
@@ -179,7 +195,7 @@ var node_drag = d3.behavior.drag()
 	    	return d.value / 10;
 	    })*/
     	.style("marker-end",  "url(#arrow)"); //Added 
-    	 /*link.append("title")
+    	 /*	link.append("title")
                     .text(function (d) {
                         return d.value;
                     });
@@ -187,7 +203,7 @@ var node_drag = d3.behavior.drag()
             link.exit().remove();
 
 	//Do the same with the circles for the nodes - no 
-	var node = svg.selectAll(".node")
+	 node = svg.selectAll(".node")
 	    .data(nodes);
 	    
 	var nodeEnter = node.enter().append("circle")
