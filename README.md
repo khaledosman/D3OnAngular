@@ -7,7 +7,7 @@ To run the app
 cd to the workspace
 
 open up a terminal and write
-python -m SimpleHTTPServer 8000
+npm install && bower install && python -m SimpleHTTPServer 8000
 
 navigate to localhost:8000
 
