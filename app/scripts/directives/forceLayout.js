@@ -184,7 +184,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		function dragstart(d, i) {
 
-		//	force.stop(); // stops the force auto positioning before you start dragging
+			force.stop(); // stops the force auto positioning before you start dragging
 		}
 
 		function dragmove(d, i) {
@@ -238,26 +238,33 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				root = json;
 				graphRec = JSON.parse(JSON.stringify(root));
 			*/
-				nodes = newval;
+			nodes = newval;
 
-				//console.log(nodes);
 
-				optArray = [];
-				for (var i = 0; i < nodes.length - 1; i++) {
-					optArray.push(nodes[i].name);
-				}
-				optArray = optArray.sort();
-				$(function() {
-					$("#search").autocomplete({
-						source: optArray
-					});
+			//console.log(nodes);
+
+			optArray = [];
+			for (var i = 0; i < nodes.length - 1; i++) {
+				optArray.push(nodes[i].name);
+			}
+			optArray = optArray.sort();
+			$(function() {
+				$("#search").autocomplete({
+					source: optArray
 				});
-				update();
+			});
+			update();
 			//});
 		});
 
 		scope.$watch('links', function(newval, oldval) {
-			links=newval;
+			links = newval;
+			root = {
+				nodes: nodes,
+				links: links
+			};
+
+			graphRec = JSON.parse(JSON.stringify(root));
 			update();
 		});
 
@@ -293,6 +300,26 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
                     });
 */
 			link.exit().remove();
+
+			var markers = svg.selectAll("marker")
+				.data(["arrow"]);
+
+			markers.enter().append("marker")
+				.attr("id", function(d) {
+					return d;
+				})
+				.attr("viewBox", "0 -5 10 10")
+				.attr("refX", 19)
+				.attr("refY", 0)
+				.attr("markerWidth", 6)
+				.attr("markerHeight", 6)
+				.attr("orient", "auto")
+				.append("path")
+				.attr("d", "M0,-5L12,0L0,5 L10,0 L0, -5")
+				.style("stroke", "#4679BD")
+				.style("opacity", "0.6");
+
+			markers.exit().remove();
 
 			//Do the same with the circles for the nodes - no 
 			node = svg.selectAll(".node")
@@ -340,27 +367,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			node.exit().remove();
 
 
-			var markers = svg.selectAll("marker")
-				.data(["arrow"]);
-
-			markers.enter().append("marker")
-				.attr("id", function(d) {
-					return d;
-				})
-				.attr("viewBox", "0 -5 10 10")
-				.attr("refX", 19)
-				.attr("refY", 0)
-				.attr("markerWidth", 6)
-				.attr("markerHeight", 6)
-				.attr("orient", "auto")
-				.append("path")
-				.attr("d", "M0,-5L12,0L0,5 L10,0 L0, -5")
-				.style("stroke", "#4679BD")
-				.style("opacity", "0.6");
-
-			markers.exit().remove();
-
-
 
 			//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
 			force.on("tick", function() {
@@ -394,6 +400,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//Creates the graph data structure out of the json data
 			force.nodes(nodes)
 				.links(links)
+				.linkDistance(120)
 				.gravity(0.01)
 				.start();
 		};

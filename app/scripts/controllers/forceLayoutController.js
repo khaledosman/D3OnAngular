@@ -86,8 +86,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 					$scope.idCounter.increment();
 					console.log(subjNode);
 					$scope.nodes.push(subjNode);
-				}
-				else {
+				} else {
 					subjNode = $scope.nodes.getNode(subject);
 				}
 
@@ -97,8 +96,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 					$scope.idCounter.increment();
 					console.log(objNode);
 					$scope.nodes.push(objNode);
-				}
-				else {
+				} else {
 					objNode = $scope.nodes.getNode(object);
 				}
 
