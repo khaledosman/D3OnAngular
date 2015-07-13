@@ -1,6 +1,100 @@
-app.controller('forceLayoutController', function($scope, $timeout) {
+/**
+ * Array.prototype.[method name] allows you to define/overwrite an objects method
+ * needle is the item you are searching for
+ * this is a special variable that refers to "this" instance of an Array.
+ * returns true if needle is in the array, and false otherwise
+ */
+
+app.controller('forceLayoutController', function($scope, $timeout, $http) {
 	$scope.shared = {
 		url: 'graph2.json'
 	};
+	$scope.nodes = [];
+	$scope.nodes.contains = function(needle) {
+		for (var i in this) {
+			if (this[i].name === needle) return true;
+		}
+		$scope.nodes.indexOf = function(name) {
+			for (var i in this) {
+				if (this[i].name === name) return i;
+
+			}
+		};
+		return false;
+	};
+
+	$scope.links = [];
+	$scope.idCounter = (function() {
+		var privateCounter = 0;
+
+		function addOne() {
+			privateCounter++;
+		}
+		return {
+			increment: function() {
+				addOne();
+			},
+			value: function() {
+				return privateCounter;
+			}
+		};
+	})();
+
+	// Simple GET request example :
+	$http.get('http://localhost:8080/model/events').success(function(data, status, headers, config) {
+		//console.log(data);
+		$scope.generateGraphFromData(data);
+		// this callback will be called asynchronously
+		// when the response is available
+	}).error(function(data, status, headers, config) {
+		// called asynchronously if an error occurs
+		// or server returns response with an error status.
+	});
 	//$timeout(function() {$scope.shared.url = 'graph2.json';}, 7000);
+
+	$scope.generateGraphFromData = function(data) {
+		data.forEach(function(d) {
+			if (d.type === "ADDED") {
+				var subject = d.newAssertion[1].split('#')[1];
+				var object = d.newAssertion[3].split('#')[1];
+				var predicate = d.newAssertion[2].split('#')[1];
+
+
+				var node = {
+					name: "",
+					group: Math.floor(Math.random() * (8 - 1 + 1)) + 1,
+				};
+
+
+				if (!$scope.nodes.contains(subject)) {
+					node.id = $scope.idCounter.value();
+					node.name = subject;
+					$scope.idCounter.increment();
+					$scope.nodes.push(node);
+				}
+
+				if (!$scope.nodes.contains(object)) {
+					node.id = $scope.idCounter.value();
+					node.name = object;
+					$scope.idCounter.increment();
+					$scope.nodes.push(node);
+				}
+
+
+				var link = {
+					source: $scope.nodes.indexOf(subject),
+					target: $scope.nodes.indexOf(object),
+					name: predicate,
+					value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
+				};
+
+				console.log(link);
+				$scope.links.push(link);
+
+			}
+		});
+		console.log($scope.nodes);
+		console.log($scope.links);
+	};
 });
+//};

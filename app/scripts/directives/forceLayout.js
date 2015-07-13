@@ -34,7 +34,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//find the node
 
 			var selectedVal = document.getElementById('search').value;
-			console.log(selectedVal);
+			//console.log(selectedVal);
 			var node = svg.selectAll(".node");
 			if (selectedVal == "none") {
 				node.style("stroke", "white").style("stroke-width", "1");
@@ -96,7 +96,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				}
 
 			});
-			toggle = 1;
+			//toggle = 1;
 
 			// }
 			/*  else {
@@ -110,7 +110,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		function mouseout() {
 			node.attr("opacity", 1);
 			link.attr("opacity", 1);
-			toggle = 0;
+			//toggle = 0;
 		}
 
 
@@ -183,7 +183,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			.on("dragend", dragend);
 
 		function dragstart(d, i) {
-			force.stop() // stops the force auto positioning before you start dragging
+
+		//	force.stop(); // stops the force auto positioning before you start dragging
 		}
 
 		function dragmove(d, i) {
@@ -229,8 +230,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		scope.$watch('url', function(newval, oldval) {
 			//Read the data from the json file 
-			console.log('new url', newval);
-			console.log('old url', oldval);
+			//console.log('new url', newval);
+			//console.log('old url', oldval);
 			d3.json(newval, function(error, json) {
 				if (error) throw error;
 
@@ -239,6 +240,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 				nodes = root.nodes;
 				links = root.links;
+
+				//console.log(nodes);
 
 				optArray = [];
 				for (var i = 0; i < nodes.length - 1; i++) {
