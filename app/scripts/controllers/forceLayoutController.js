@@ -14,13 +14,20 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		for (var i in this) {
 			if (this[i].name === needle) return true;
 		}
-		$scope.nodes.indexOf = function(name) {
-			for (var i in this) {
-				if (this[i].name === name) return i;
+	};
+	/*$scope.nodes.indexOf = function(name) {
+		console.log("This", this);
+		console.log("name", name);
+		for (var i in this) {
+			if (this[i].name === name) return i;
+			else console.log('fail');
+		}
+	};*/
 
-			}
-		};
-		return false;
+	$scope.nodes.getNode = function(name) {
+		for (var i in this) {
+			if (this[i].name === name) return this[i];
+		}
 	};
 
 	$scope.links = [];
@@ -59,31 +66,46 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 				var object = d.newAssertion[3].split('#')[1];
 				var predicate = d.newAssertion[2].split('#')[1];
 
+				console.log("subject", subject);
+				console.log("predicate", predicate);
+				console.log("object", object);
 
-				var node = {
+				var subjNode = {
 					name: "",
 					group: Math.floor(Math.random() * (8 - 1 + 1)) + 1,
 				};
 
+				var objNode = {
+					name: "",
+					group: Math.floor(Math.random() * (8 - 1 + 1)) + 1,
+				};
 
 				if (!$scope.nodes.contains(subject)) {
-					node.id = $scope.idCounter.value();
-					node.name = subject;
+					subjNode.id = $scope.idCounter.value();
+					subjNode.name = subject;
 					$scope.idCounter.increment();
-					$scope.nodes.push(node);
+					console.log(subjNode);
+					$scope.nodes.push(subjNode);
+				}
+				else {
+					subjNode = $scope.nodes.getNode(subject);
 				}
 
 				if (!$scope.nodes.contains(object)) {
-					node.id = $scope.idCounter.value();
-					node.name = object;
+					objNode.id = $scope.idCounter.value();
+					objNode.name = object;
 					$scope.idCounter.increment();
-					$scope.nodes.push(node);
+					console.log(objNode);
+					$scope.nodes.push(objNode);
+				}
+				else {
+					objNode = $scope.nodes.getNode(object);
 				}
 
 
 				var link = {
-					source: $scope.nodes.indexOf(subject),
-					target: $scope.nodes.indexOf(object),
+					source: $scope.nodes.indexOf(subjNode),
+					target: $scope.nodes.indexOf(objNode),
 					name: predicate,
 					value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
 				};

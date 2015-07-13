@@ -2,8 +2,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 	return {
 		scope: {
-			'url': '=',
-			'onClick': '&'
+			'nodes': '=',
+			'links': '='
 		},
 		restrict: 'E',
 		link: linkFn,
@@ -228,18 +228,17 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		//this.links = force.links();
 
 
-		scope.$watch('url', function(newval, oldval) {
+		scope.$watch('nodes', function(newval, oldval) {
 			//Read the data from the json file 
 			//console.log('new url', newval);
 			//console.log('old url', oldval);
-			d3.json(newval, function(error, json) {
+			/*d3.json(newval, function(error, json) {
 				if (error) throw error;
 
 				root = json;
 				graphRec = JSON.parse(JSON.stringify(root));
-
-				nodes = root.nodes;
-				links = root.links;
+			*/
+				nodes = newval;
 
 				//console.log(nodes);
 
@@ -254,7 +253,12 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					});
 				});
 				update();
-			});
+			//});
+		});
+
+		scope.$watch('links', function(newval, oldval) {
+			links=newval;
+			update();
 		});
 
 		/*
