@@ -118,6 +118,10 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		});
 		console.log($scope.nodes);
 		console.log($scope.links);
+		$scope.links.forEach(function(link) {
+			if (link.source === link.target)
+				console.log("B-I-N-G-O");
+		});
 	};
 });
 //};
