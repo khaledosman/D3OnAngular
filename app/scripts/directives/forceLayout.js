@@ -89,8 +89,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				if (d.source.name === name || d.target.name === name) {
 
 					d3.select(this).attr("opacity", 1);
-					console.log(d3.select(this));
-					console.log(d3.select(this)[0][0]);
+					//	console.log(d3.select(this));
+					//	console.log(d3.select(this)[0][0]);
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
 
@@ -349,6 +349,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.data(links);
 
 
+
 			var linkEnter = link.enter().append("g")
 				.attr("class", "link");
 
@@ -360,8 +361,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					return 0.7;
 				});
 
-
 			link.exit().remove();
+
+
 			/*var linkText = linkEnter.append("text")
 				.attr("dy", "-1.3em")
 				.style("fill", "gray")

@@ -69,9 +69,9 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 				var object = d.newAssertion[3].split('#')[1];
 				var predicate = d.newAssertion[2].split('#')[1];
 
-				console.log("subject", subject);
-				console.log("predicate", predicate);
-				console.log("object", object);
+				//console.log("subject", subject);
+				//console.log("predicate", predicate);
+				//console.log("object", object);
 
 				var subjNode = {
 					name: "",
@@ -87,7 +87,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 					subjNode.id = $scope.idCounter.value();
 					subjNode.name = subject;
 					$scope.idCounter.increment();
-					console.log(subjNode);
+					//console.log(subjNode);
 					$scope.nodes.push(subjNode);
 				} else {
 					subjNode = $scope.nodes.getNode(subject);
@@ -97,7 +97,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 					objNode.id = $scope.idCounter.value();
 					objNode.name = object;
 					$scope.idCounter.increment();
-					console.log(objNode);
+					//console.log(objNode);
 					$scope.nodes.push(objNode);
 				} else {
 					objNode = $scope.nodes.getNode(object);
@@ -111,7 +111,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 					value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
 				};
 
-				console.log(link);
+				//console.log(link);
 				$scope.links.push(link);
 
 			}
