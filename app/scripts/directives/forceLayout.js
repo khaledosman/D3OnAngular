@@ -218,6 +218,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		function dragstart(d, i) {
 
+			node.on("mouseover", null).on("mouseout", null);
 			//force.stop(); // stops the force auto positioning before you start dragging
 		}
 
@@ -229,6 +230,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		}
 
 		function dragend(d, i) {
+			node.on("mouseover", mouseover).on("mouseout", mouseout);
 			d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
 			force.resume();
 		}
