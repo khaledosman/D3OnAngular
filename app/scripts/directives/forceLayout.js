@@ -22,7 +22,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			optArray = [],
 			radius = 8,
 			padding = 1,
-			link, node;
+			link, node, linkText;
 		scope.addNode = function(id) {
 			nodes.push({
 				"id": id
@@ -82,12 +82,15 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var selected = d3.select(this);
 			var name = selected.text();
 
-			link.attr("opacity", 0.3);
-			node.attr("opacity", 0.3);
+			linkText.attr("opacity",1);
+			link.attr("opacity", 0);
+			node.attr("opacity", 0);
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 
 					d3.select(this).attr("opacity", 1);
+					console.log(d3.select(this));
+					console.log(d3.select(this)[0][0]);
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
 
@@ -112,6 +115,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		function mouseout() {
 			node.attr("opacity", 1);
 			link.attr("opacity", 1);
+
+linkText.attr("opacity",0);
 			//toggle = 0;
 		}
 
@@ -349,9 +354,10 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			var line = linkEnter.append("line")
 				//.attr("class", "link")
-				.style("marker-end", "url(#arrow)")
+			//	.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", function(d) {
-					return d.value / 7;
+					//return d.value / 7;
+					return 0.7;
 				});
 
 
@@ -368,18 +374,16 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			 	return d.value / 10;
 			 })*/
 			//Added 
-			var linkText = linkEnter.append("text")
-				.attr("dy", "-1.3em")
-				.style("fill", "gray")
-				//.attr("visibility", "hidden")
+			 linkText = linkEnter.append("text")
+				//.attr("dy", "-1.3em")
+				//.style("fill", "transparent")
+				.attr("opacity",0)
 				.text(function(d) {
-					var oldtext = d3.select(this).text();
-					var newtext = oldtext.concat(d.name);
 					//console.warn('oldtext', oldtext);
 					//console.warn('newtext', newtext);
 
-					return newtext;
-				});
+					return d.name;
+				});	
 
 
 			//Do the same with the circles for the nodes - no 

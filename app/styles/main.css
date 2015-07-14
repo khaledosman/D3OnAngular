@@ -50,6 +50,10 @@ line.link
     stroke-width: 2.1px;
 }
 
+link text {
+    font: 100px;
+}
+
 .node :hover
 {
     opacity: 1;
