@@ -82,7 +82,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var selected = d3.select(this);
 			var name = selected.text();
 
-			linkText.attr("opacity",1);
+			linkText.attr("opacity", 1);
 			link.attr("opacity", 0);
 			node.attr("opacity", 0);
 			link.each(function(d) {
@@ -116,7 +116,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			node.attr("opacity", 1);
 			link.attr("opacity", 1);
 
-linkText.attr("opacity",0);
+			linkText.attr("opacity", 0);
 			//toggle = 0;
 		}
 
@@ -354,7 +354,7 @@ linkText.attr("opacity",0);
 
 			var line = linkEnter.append("line")
 				//.attr("class", "link")
-			//	.style("marker-end", "url(#arrow)")
+				//	.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", function(d) {
 					//return d.value / 7;
 					return 0.7;
@@ -374,16 +374,16 @@ linkText.attr("opacity",0);
 			 	return d.value / 10;
 			 })*/
 			//Added 
-			 linkText = linkEnter.append("text")
+			linkText = linkEnter.append("text")
 				//.attr("dy", "-1.3em")
 				//.style("fill", "transparent")
-				.attr("opacity",0)
+				.attr("opacity", 0)
 				.text(function(d) {
 					//console.warn('oldtext', oldtext);
 					//console.warn('newtext', newtext);
 
 					return d.name;
-				});	
+				});
 
 
 			//Do the same with the circles for the nodes - no 
