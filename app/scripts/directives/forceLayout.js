@@ -324,13 +324,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			var line = linkEnter.append("line")
 				//.attr("class", "link")
-				//	.style("marker-end", "url(#arrow)")
-				.attr("stroke-width", function(d) {
-					//return d.value / 7;
-					return 0.7;
-				});
-
-			link.exit().remove();
+				.style("marker-end", "url(#arrow)")
+				.attr("stroke-width", 1.5);
 
 
 
@@ -342,12 +337,13 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				});
 
 
+			link.exit().remove();
+
 			//Do the same with the circles for the nodes - no 
 			node = svg.selectAll(".node")
 				.data(nodes);
 
 
-			node.exit().remove();
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
@@ -372,6 +368,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					setText(this, d.name);
 					return d.name;
 				});
+
+
+			node.exit().remove();
 
 			function setText(textElmt, str) {
 				textElmt.textContent = str;
@@ -449,7 +448,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 				linkText
 					.attr("transform", function(d) {
-						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," + (d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
+						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," +
+							(d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
 					});
 
 				node
