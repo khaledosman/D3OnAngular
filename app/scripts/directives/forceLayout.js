@@ -124,6 +124,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		scope.removeNode = function(id) {
 			var i = 0;
 			var n = scope.findNode(id);
+			console.log(n);
 			while (i < links.length) {
 				if ((links[i].source == n) || (links[i].target == n)) {
 					links.splice(i, 1);
@@ -240,7 +241,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			*/
 			nodes = newval;
 
-
+			console.log('nodes changed');
 			//console.log(nodes);
 
 			optArray = [];
@@ -259,6 +260,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
+			console.log('links changed');
 			root = {
 				nodes: nodes,
 				links: links
@@ -284,25 +286,12 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		var update = function() {
 
-			//Create all the line svgs but without locations yet
-			link = svg.selectAll(".link")
-				.data(links);
 
-			link.enter().append("line")
-				.attr("class", "link")
-				/* .attr("stroke-width", function(d) {
-				 	return d.value / 10;
-				 })*/
-				.style("marker-end", "url(#arrow)"); //Added 
-			/*	link.append("title")
-                    .text(function (d) {
-                        return d.value;
-                    });
-*/
-			link.exit().remove();
 
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
+
+			markers.exit().remove();
 
 			markers.enter().append("marker")
 				.attr("id", function(d) {
@@ -319,11 +308,51 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.style("stroke", "#4679BD")
 				.style("opacity", "0.6");
 
-			markers.exit().remove();
+
+
+			//Create all the line svgs but without locations yet
+			link = svg.selectAll(".link")
+				.data(links);
+
+			link.exit().remove();
+
+			var linkEnter = link.enter().append("g")
+				.attr("class", "link");
+
+			var line = linkEnter.append("line")
+				//.attr("class", "link")
+				.style("marker-end", "url(#arrow)")
+				.attr("stroke-width", function(d) {
+					return d.value / 7;
+				});
+
+			/*var linkText = linkEnter.append("text")
+				.attr("dy", "-1.3em")
+				.style("fill", "gray")
+				//.attr("visibility", "hidden")
+				.text(function(d) {
+					return d.name;
+				});
+		*/
+			/* .attr("stroke-width", function(d) {
+			 	return d.value / 10;
+			 })*/
+			//Added 
+			var linkText = linkEnter.append("text")
+				.attr("dy", "-1.3em")
+				.style("fill", "gray")
+				//.attr("visibility", "hidden")
+				.text(function(d) {
+					return d.name;
+				});
+
 
 			//Do the same with the circles for the nodes - no 
 			node = svg.selectAll(".node")
 				.data(nodes);
+
+
+			node.exit().remove();
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
@@ -364,14 +393,11 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			}
 
 
-			node.exit().remove();
-
-
 
 			//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
 			force.on("tick", function() {
 
-				link.attr("x1", function(d) {
+				line.attr("x1", function(d) {
 						return d.source.x;
 					})
 					.attr("y1", function(d) {
@@ -382,6 +408,15 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					})
 					.attr("y2", function(d) {
 						return d.target.y;
+					});
+
+				linkText
+					.attr("transform", function(d) {
+						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," + (d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
+					});
+				node
+					.attr("transform", function(d) {
+						return "translate(" + d.x + "," + d.x + ")";
 					});
 
 				/*circle.attr("cx", function (d) {
@@ -400,8 +435,10 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//Creates the graph data structure out of the json data
 			force.nodes(nodes)
 				.links(links)
-				.linkDistance(120)
-				.gravity(0.01)
+				.linkDistance(130)
+				.charge(-120)
+				.friction(0.5)
+				.gravity(0.001)
 				.start();
 		};
 

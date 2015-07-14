@@ -4,10 +4,10 @@
 </form>
 <button ng-click = removeAllNodes()>remove all nodes </button>
 <button ng-click = removeAllLinks()>remove all links </button>
-<button ng-click = removeNode()>remove node </button> 
+<button ng-click = removeNode(nodes[0])>remove node </button> 
 <button ng-click = addNode()>Add node </button>
 <button ng-click = addLink()>Add Link </button>
-<button ng-click = removeLink()>remove link </button>
+<button ng-click = removeLink(0)>remove link </button>
 <button ng-click = goCrazy()> go crazy </button>
 <div class="ui-widget">
    <input id="search" ng-model="val">

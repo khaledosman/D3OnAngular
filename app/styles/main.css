@@ -1,51 +1,69 @@
-  body{
+  body
+{
     text-align: center;
-  }
-  donut-chart{
+}
+donut-chart
+{
+    display: inline-block;
+
     width: 250px;
     height: 150px;
-    display:inline-block;
-    cursor: pointer;
-  }
 
-  tree-layout{
+    cursor: pointer;
+}
+
+tree-layout
+{
+    display: inline-block;
+
     width: 1250px;
     height: 650px;
-    display:inline-block;
+
     cursor: pointer;
-  }
-
-  .node circle {
-  cursor: pointer;
-  stroke: #3182bd;
-  stroke-width: 1.5px;
-  opacity: 0.9;
 }
 
-.node text {
-  font: 10px sans-serif;
-  pointer-events: none;
-  text-anchor: middle;
+.node circle
+{
+    cursor: pointer;
+
+    opacity: .9;
+
+    stroke: #3182bd;
+    stroke-width: 1.5px;
 }
 
-line.link {
-  fill: none;
-  stroke: #9ecae1;
-  stroke-width: 2.1px;
-  cursor: pointer;
+text
+{
+    font: 10px sans-serif;
+
+    pointer-events: none;
+
+    text-anchor: middle;
 }
 
-.node :hover {
-  opacity: 1;
+line.link
+{
+    cursor: pointer;
+
+    fill: none;
+    stroke: #9ecae1;
+    stroke-width: 2.1px;
 }
 
-.link {
-  stroke: #999;
-  stroke-opacity: 0.7;
+.node :hover
+{
+    opacity: 1;
 }
 
-d3-tip {
+.link
+{
+    stroke: #999;
+    stroke-opacity: .7;
+}
+
+d3-tip
+{
     line-height: 1;
+
     color: black;
 }
-

@@ -10,9 +10,9 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		url: 'graph2.json'
 	};
 	$scope.nodes = [];
-	$scope.nodes.contains = function(needle) {
+	$scope.nodes.contains = function(name) {
 		for (var i in this) {
-			if (this[i].name === needle) return true;
+			if (this[i].name === name) return true;
 		}
 	};
 	/*$scope.nodes.indexOf = function(name) {
@@ -56,6 +56,7 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 	}).error(function(data, status, headers, config) {
 		// called asynchronously if an error occurs
 		// or server returns response with an error status.
+		console.log('error', data);
 	});
 	//$timeout(function() {$scope.shared.url = 'graph2.json';}, 7000);
 
