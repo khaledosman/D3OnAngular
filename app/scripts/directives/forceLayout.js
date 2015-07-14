@@ -35,7 +35,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			//find the node
 			var selectedVal = document.getElementById('search').value;
-			//console.log(selectedVal);
+
 			var node = svg.selectAll(".node");
 			if (selectedVal == "none") {
 				node.style("stroke", "white").style("stroke-width", "1");
@@ -44,7 +44,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					return d.name != selectedVal;
 				});
 				selected.style("opacity", "0");
-				//link.style("opacity", "0");
+
 				d3.selectAll(".node, .link").transition()
 					.duration(5000)
 					.style("opacity", 1);
@@ -61,23 +61,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			update();
 		};
 
-		//Toggle stores whether the highlighting is on
-		//var toggle = 0;
-		//Create an array logging what is connected to what
-		/*var linkedByIndex = {};
-		for (i = 0; i < nodes.length; i++) {
-			linkedByIndex[i + "," + i] = 1;
-		}
-		links.forEach(function(d) {
-			linkedByIndex[d.source.index + "," + d.target.index] = 1;
-		});
-		//This function looks up whether a pair are neighbours
-		function neighboring(a, b) {
-			return linkedByIndex[a.index + "," + b.index];
-		}*/
-
 		function mouseover() {
-			//if(toggle === 0) {
+
 			var selected = d3.select(this);
 			var name = selected.text();
 
@@ -88,8 +73,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				if (d.source.name === name || d.target.name === name) {
 
 					d3.select(this).attr("opacity", 1);
-					//	console.log(d3.select(this));
-					//	console.log(d3.select(this)[0][0]);
+
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
 
@@ -100,15 +84,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				}
 
 			});
-			//toggle = 1;
 
-			// }
-			/*  else {
-			  	        //Put them back to opacity=1
-			    node.attr("opacity", 1);
-			    link.attr("opacity", 1);
-			    toggle = 0;
-			  }*/
 		}
 
 		function mouseout() {
@@ -116,7 +92,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			link.attr("opacity", 1);
 
 			linkText.attr("opacity", 0);
-			//toggle = 0;
+
 		}
 
 
@@ -131,7 +107,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			var i = 0;
 			var n = scope.findNode(id);
-			//console.log(n);
+
 			while (i < links.length) {
 				if ((links[i].source == n) || (links[i].target == n)) {
 					links.splice(i, 1);
@@ -261,23 +237,13 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			.linkDistance(80)
 			.size([width, height]);
 
-		//this.nodes= force.nodes();
-		//this.links = force.links();
 
 		scope.$watch('nodes', function(newval, oldval) {
-			//Read the data from the json file 
-			//console.log('new url', newval);
-			//console.log('old url', oldval);
-			/*d3.json(newval, function(error, json) {
-				if (error) throw error;
 
-				root = json;
-				graphRec = JSON.parse(JSON.stringify(root));
-			*/
 			nodes = newval;
 
 			console.log('nodes changed');
-			//console.log(nodes);
+
 
 			optArray = [];
 			for (var i = 0; i < nodes.length - 1; i++) {
@@ -290,7 +256,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				});
 			});
 			update();
-			//});
+
 		});
 
 
@@ -308,18 +274,18 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 
 		/*
-		   // Browser onresize event
-		          window.onresize = function() {
-		            scope.$apply();
-		          };
+				// Browser onresize event
+				window.onresize = function() {
+					scope.$apply();
+				};
 
 
-		    scope.$watch(function() {
-		            return el.innerWidth;
-		          }, function() {
-		            update();
-		          });
-		    */
+				scope.$watch(function() {
+					return el.innerWidth;
+				}, function() {
+					update();
+				});*/
+
 
 		var update = function() {
 
@@ -367,26 +333,11 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			link.exit().remove();
 
 
-			/*var linkText = linkEnter.append("text")
-				.attr("dy", "-1.3em")
-				.style("fill", "gray")
-				//.attr("visibility", "hidden")
-				.text(function(d) {
-					return d.name;
-				});
-		*/
-			/* .attr("stroke-width", function(d) {
-			 	return d.value / 10;
-			 })*/
-			//Added 
-			linkText = linkEnter.append("text")
-				//.attr("dy", "-1.3em")
-				//.style("fill", "transparent")
-				.attr("opacity", 0)
-				.text(function(d) {
-					//console.warn('oldtext', oldtext);
-					//console.warn('newtext', newtext);
 
+			linkText = linkEnter.append("text")
+
+			.attr("opacity", 0)
+				.text(function(d) {
 					return d.name;
 				});
 
@@ -500,12 +451,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					.attr("transform", function(d) {
 						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," + (d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
 					});
-				/*circle.attr("cx", function (d) {
-				    return d.x;
-				})
-				    .attr("cy", function (d) {
-				    return d.y;
-				});*/
 
 				node
 					.attr("transform", function(d) {
