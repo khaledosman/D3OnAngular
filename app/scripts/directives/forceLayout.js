@@ -20,6 +20,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		var nodes = [],
 			links = [],
 			optArray = [],
+			radius = 8,
+			padding = 1,
 			link, node;
 		scope.addNode = function(id) {
 			nodes.push({
@@ -178,6 +180,32 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			}
 		};
 
+		function collide(alpha) {
+			var quadtree = d3.geom.quadtree(nodes);
+			return function(d) {
+				var rb = 2 * radius + padding,
+					nx1 = d.x - rb,
+					nx2 = d.x + rb,
+					ny1 = d.y - rb,
+					ny2 = d.y + rb;
+				quadtree.visit(function(quad, x1, y1, x2, y2) {
+					if (quad.point && (quad.point !== d)) {
+						var x = d.x - quad.point.x,
+							y = d.y - quad.point.y,
+							l = Math.sqrt(x * x + y * y);
+						if (l < rb) {
+							l = (l - rb) / l * alpha;
+							d.x -= x *= l;
+							d.y -= y *= l;
+							quad.point.x += x;
+							quad.point.y += y;
+						}
+					}
+					return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+				});
+			};
+		}
+
 		var node_drag = d3.behavior.drag()
 			.on("dragstart", dragstart)
 			.on("drag", dragmove)
@@ -185,7 +213,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		function dragstart(d, i) {
 
-			force.stop(); // stops the force auto positioning before you start dragging
+			//force.stop(); // stops the force auto positioning before you start dragging
 		}
 
 		function dragmove(d, i) {
@@ -228,7 +256,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		//this.nodes= force.nodes();
 		//this.links = force.links();
 
-
 		scope.$watch('nodes', function(newval, oldval) {
 			//Read the data from the json file 
 			//console.log('new url', newval);
@@ -258,6 +285,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//});
 		});
 
+
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
 			console.log('links changed');
@@ -269,6 +297,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			graphRec = JSON.parse(JSON.stringify(root));
 			update();
 		});
+
 
 		/*
 		   // Browser onresize event
@@ -291,8 +320,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
 
-			markers.exit().remove();
-
 			markers.enter().append("marker")
 				.attr("id", function(d) {
 					return d;
@@ -309,12 +336,13 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.style("opacity", "0.6");
 
 
+			markers.exit().remove();
+
 
 			//Create all the line svgs but without locations yet
 			link = svg.selectAll(".link")
 				.data(links);
 
-			link.exit().remove();
 
 			var linkEnter = link.enter().append("g")
 				.attr("class", "link");
@@ -326,6 +354,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					return d.value / 7;
 				});
 
+
+			link.exit().remove();
 			/*var linkText = linkEnter.append("text")
 				.attr("dy", "-1.3em")
 				.style("fill", "gray")
@@ -343,7 +373,12 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.style("fill", "gray")
 				//.attr("visibility", "hidden")
 				.text(function(d) {
-					return d.name;
+					var oldtext = d3.select(this).text();
+					var newtext = oldtext.concat(d.name);
+					//console.warn('oldtext', oldtext);
+					//console.warn('newtext', newtext);
+
+					return newtext;
 				});
 
 
@@ -414,11 +449,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					.attr("transform", function(d) {
 						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," + (d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
 					});
-				node
-					.attr("transform", function(d) {
-						return "translate(" + d.x + "," + d.x + ")";
-					});
-
 				/*circle.attr("cx", function (d) {
 				    return d.x;
 				})
@@ -429,7 +459,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				node
 					.attr("transform", function(d) {
 						return "translate(" + d.x + "," + d.y + ")";
-					});
+					})
+					.each(collide(0.6));
 
 			});
 			//Creates the graph data structure out of the json data

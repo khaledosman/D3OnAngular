@@ -10,6 +10,9 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		url: 'graph2.json'
 	};
 	$scope.nodes = [];
+
+	$scope.links = [];
+	
 	$scope.nodes.contains = function(name) {
 		for (var i in this) {
 			if (this[i].name === name) return true;
@@ -30,7 +33,6 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		}
 	};
 
-	$scope.links = [];
 	$scope.idCounter = (function() {
 		var privateCounter = 0;
 
