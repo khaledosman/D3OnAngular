@@ -1,9 +1,10 @@
-app.directive('forceLayout', ['d3Service', function(d3Service) {
+app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 	return {
 		scope: {
 			'nodes': '=',
-			'links': '='
+			'links': '=',
+			'counter': '='
 		},
 		restrict: 'E',
 		link: linkFn,
@@ -23,14 +24,34 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			radius = 8,
 			padding = 1,
 			link, node, linkText;
+
 		scope.addNode = function(name, id) {
 			nodes.push({
 				"name": name,
 				"id": id
 			});
 			update();
-		};
 
+			var prefix = "http://itonics.co/itonics#";
+
+			var Assertion = [
+				prefix.concat("itonics"),
+				prefix.concat("subject"),
+				prefix.concat("predicate"),
+				prefix.concat("object")
+			];
+			console.log(createAssertionEvent("ADDED", Assertion));
+
+/*
+			var createAssertionEvent = function(type, assertion) {
+				var AssertionEvent = {
+					"type": type,
+					"newAssertion": assertion
+				};
+				return AssertionEvent;
+			};
+*/
+		};
 
 		scope.searchNode = function searchNode() {
 
@@ -244,7 +265,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 			nodes = newval;
 
-			console.log('nodes changed');
+			console.log('nodes changed', nodes);
 			root = {
 				nodes: nodes,
 				links: links
@@ -272,7 +293,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
-			console.log('links changed');
+			console.log('links changed', links);
 			root = {
 				nodes: nodes,
 				links: links
@@ -480,6 +501,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.friction(0.7)
 				.gravity(0.001)
 				.start();
+
 		};
 
 	}

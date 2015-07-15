@@ -37,7 +37,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 		return name.charAt(0).toLowerCase() === name.charAt(0);
 	};
 
-	$scope.createOrFindNode = function(name) {
+	$scope.createOrFindNode = function(name, workspace) {
 		var node = $scope.nodes.getNode(name);
 
 		if (!node) {
@@ -45,6 +45,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 				name: name,
 				id: $scope.counter++,
 				group: Math.floor(Math.random() * (8 - 1 + 1)) + 1,
+				workspace: workspace
 			};
 
 			$scope.nameToIdMap[name] = node.id;
@@ -54,10 +55,19 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 		return node;
 	};
 
-	$scope.sendCommand = function(command) {
+	$scope.sendCommand = function(type, assertions) {
+		
+		var assertionEvents = [];
 		// Simple POST request example (passing data) :
 		$http.post('/someUrl', {
 			msg: 'hello word!'
+				/*"type": "ADDED",
+"newAssertion": [
+"http://itonics.co/itonics",
+"http://itonics.co/itonics#BusinessUnit",
+"http://itonics.co/rdf#type",
+"http://itonics.co/rdfs#Resource"
+]*/
 		}).
 		success(function(data, status, headers, config) {
 			// this callback will be called asynchronously
@@ -72,24 +82,31 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 	$scope.generateGraphFromData = function(data) {
 		data.forEach(function(d) {
 			if (d.type === "ADDED") {
-				var namespace = d.newAssertion[0].split('/')[3];
+				var workspace = d.newAssertion[0].split('/')[3];
 				var subject = d.newAssertion[1].split('#')[1];
 				var predicate = d.newAssertion[2].split('#')[1];
-				var object = d.newAssertion[3].split('#')[1];
+				var value = d.newAssertion[3].split('(')[0];
+				var object;
+				if(value === "Uri")
+				 object = d.newAssertion[3].split('#')[1].split(')')[0];
+				else if(value === "Plain")
+				 object = value[1];
+				console.log(object);
 				//console.log("name space -->", namespace);
 				//console.log("subject", subject);
 				//console.log("predicate", predicate);
 				//console.log("object", object);
-
+				if(subject)
 				if (!$scope.isProperty(subject) && !$scope.isProperty(object)) {
-					var subjectNode = $scope.createOrFindNode(subject);
-					var objectNode = $scope.createOrFindNode(object);
+					var subjectNode = $scope.createOrFindNode(subject, workspace);
+					var objectNode = $scope.createOrFindNode(object, workspace);
 
 					var link = {
 						source: subjectNode.id,
 						target: objectNode.id,
 						name: predicate,
-						value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
+						value: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+						workspace: workspace
 					};
 
 					//console.log(link);
