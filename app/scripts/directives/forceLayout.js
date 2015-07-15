@@ -474,9 +474,10 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			//Creates the graph data structure out of the json data
 			force.nodes(nodes)
 				.links(links)
-				.linkDistance(130)
-				.charge(-120)
-				.friction(0.5)
+				.linkDistance(110)
+				.linkStrength(0.3)
+				.charge(-300)
+				.friction(0.7)
 				.gravity(0.001)
 				.start();
 		};
