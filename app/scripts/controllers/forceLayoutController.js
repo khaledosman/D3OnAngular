@@ -5,7 +5,7 @@
  * returns true if needle is in the array, and false otherwise
  */
 
-app.controller('forceLayoutController', function($scope, $timeout, $http) {
+app.controller('forceLayoutController', function($scope, $interval, $http) {
 	$scope.shared = {
 		url: 'graph2.json'
 	};
@@ -16,9 +16,8 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 	$scope.nameToIdMap = {};
 
 	$scope.nodes.getNode = function(name) {
-		return $scope.nodes[$scope.nameToIdMap[name]]
+		return $scope.nodes[$scope.nameToIdMap[name]];
 	};
-
 	$scope.counter = 0;
 
 	// Simple GET request example :
@@ -33,6 +32,10 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 		console.log('error', data);
 	});
 	//$timeout(function() {$scope.shared.url = 'graph2.json';}, 7000);
+
+	$scope.isProperty = function(name) {
+		return name.charAt(0).toLowerCase() === name.charAt(0);
+	};
 
 	$scope.createOrFindNode = function(name) {
 		var node = $scope.nodes.getNode(name);
@@ -63,19 +66,20 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 				//console.log("predicate", predicate);
 				//console.log("object", object);
 
-				var subjectNode = $scope.createOrFindNode(subject);
-				var objectNode = $scope.createOrFindNode(object);
+				if (!$scope.isProperty(subject) && !$scope.isProperty(object)) {
+					var subjectNode = $scope.createOrFindNode(subject);
+					var objectNode = $scope.createOrFindNode(object);
 
-				var link = {
-					source: subjectNode.id,
-					target: objectNode.id,
-					name: predicate,
-					value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
-				};
+					var link = {
+						source: subjectNode.id,
+						target: objectNode.id,
+						name: predicate,
+						value: Math.floor(Math.random() * (10 - 1 + 1)) + 1
+					};
 
-				//console.log(link);
-				$scope.links.push(link);
-
+					//console.log(link);
+					$scope.links.push(link);
+				}
 			}
 		});
 		//console.log($scope.nodes);

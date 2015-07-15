@@ -23,8 +23,9 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			radius = 8,
 			padding = 1,
 			link, node, linkText;
-		scope.addNode = function(id) {
+		scope.addNode = function(name, id) {
 			nodes.push({
+				"name": name,
 				"id": id
 			});
 			update();
@@ -46,13 +47,14 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				selected.style("opacity", "0");
 
 				d3.selectAll(".node, .link").transition()
-					.duration(5000)
+					.duration(2000)
 					.style("opacity", 1);
 			}
 		};
 		//adjust threshold
 		scope.setThreshold = function(thresh) {
 			links.splice(0, links.length);
+			update();
 			for (var i = 0; i < graphRec.links.length; i++) {
 				if (graphRec.links[i].value > thresh) {
 					links.push(graphRec.links[i]);
@@ -67,8 +69,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var name = selected.text();
 
 			linkText.attr("opacity", 1);
-			link.attr("opacity", 0);
-			node.attr("opacity", 0);
+			link.attr("opacity", 0.1);
+			node.attr("opacity", 0.1);
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 
@@ -90,9 +92,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 		function mouseout() {
 			node.attr("opacity", 1);
 			link.attr("opacity", 1);
-
 			linkText.attr("opacity", 0);
-
 		}
 
 
@@ -245,14 +245,18 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			nodes = newval;
 
 			console.log('nodes changed');
+			root = {
+				nodes: nodes,
+				links: links
+			};
 
-
+			graphRec = JSON.parse(JSON.stringify(root));
 			updateAutoComplete(nodes);
 			update();
 
 		});
 
-		function updateAutoComplete(nodes){
+		function updateAutoComplete(nodes) {
 			optArray = [];
 			for (var i = 0; i < nodes.length - 1; i++) {
 				optArray.push(nodes[i].name);
@@ -300,6 +304,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
 
+			markers.exit().remove();
+
 			markers.enter().append("marker")
 				.attr("id", function(d) {
 					return d;
@@ -316,14 +322,13 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.style("opacity", "0.6");
 
 
-			markers.exit().remove();
-
 
 			//Create all the line svgs but without locations yet
 			link = svg.selectAll(".link")
 				.data(links);
 
 
+			link.exit().remove();
 
 			var linkEnter = link.enter().append("g")
 				.attr("class", "link");
@@ -345,13 +350,13 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				});
 
 
-			link.exit().remove();
 
 			//Do the same with the circles for the nodes - no 
 			node = svg.selectAll(".node")
 				.data(nodes);
 
 
+			node.exit().remove();
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
@@ -378,7 +383,6 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				});
 
 
-			node.exit().remove();
 
 			function setText(textElmt, str) {
 				textElmt.textContent = str;
