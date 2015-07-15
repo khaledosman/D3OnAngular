@@ -96,7 +96,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 				//console.log("subject", subject);
 				//console.log("predicate", predicate);
 				//console.log("object", object);
-				if(subject)
+				if(subject && subject !== "Resource" && subject !=="Class" && object !== "Resource" && object !== "Class")
 				if (!$scope.isProperty(subject) && !$scope.isProperty(object)) {
 					var subjectNode = $scope.createOrFindNode(subject, workspace);
 					var objectNode = $scope.createOrFindNode(object, workspace);
