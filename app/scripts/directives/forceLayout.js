@@ -114,6 +114,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				} else i++;
 			}
 			nodes.splice(scope.findNodeIndex(id), 1);
+			updateAutoComplete(nodes);
 			update();
 		};
 
@@ -134,6 +135,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 
 		scope.removeAllNodes = function() {
 			nodes.splice(0, nodes.length);
+			updateAutoComplete(nodes);
 			update();
 		};
 
@@ -245,6 +247,12 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 			console.log('nodes changed');
 
 
+			updateAutoComplete(nodes);
+			update();
+
+		});
+
+		function updateAutoComplete(nodes){
 			optArray = [];
 			for (var i = 0; i < nodes.length - 1; i++) {
 				optArray.push(nodes[i].name);
@@ -255,9 +263,7 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 					source: optArray
 				});
 			});
-			update();
-
-		});
+		}
 
 
 		scope.$watch('links', function(newval, oldval) {
@@ -323,6 +329,8 @@ app.directive('forceLayout', ['d3Service', function(d3Service) {
 				.attr("class", "link");
 
 			var line = linkEnter.append("line")
+
+			.attr("opacity", 0.4)
 				//.attr("class", "link")
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 1.5);
