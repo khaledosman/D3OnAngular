@@ -68,7 +68,8 @@ app.controller('forceLayoutController', function($scope, $timeout, $http) {
 				var subject = d.newAssertion[1].split('#')[1];
 				var object = d.newAssertion[3].split('#')[1];
 				var predicate = d.newAssertion[2].split('#')[1];
-
+				var namespace = d.newAssertion[0].split('/')[3];
+				//console.log("name space -->", namespace);
 				//console.log("subject", subject);
 				//console.log("predicate", predicate);
 				//console.log("object", object);
