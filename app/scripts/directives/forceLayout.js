@@ -24,7 +24,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			optArray = [],
 			radius = 8,
 			padding = 1,
-			link, node, linkText, line;
+			link, node, linkText, line, linkLabel;
 
 		scope.addNode = function(name, id) {
 			nodes.push({
@@ -91,14 +91,20 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			var selected = d3.select(this);
 			var name = selected.text();
-
-			linkText.attr("opacity", 1);
+			//linkText.attr("opacity",1);
+			//linkText.attr("opacity", 1);
 			link.attr("opacity", 0.1);
 			node.attr("opacity", 0.1);
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 
-					d3.select(this).attr("opacity", 1);
+					d3.select(this).attr("opacity", 0.7);
+					var id = d3.select(this).attr('id');
+
+					var selected = linkText.filter(function(d, i) {
+						return i == id;
+					});
+					selected.style("opacity", "1");
 
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
@@ -114,9 +120,21 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		}
 
 		function mouseout() {
+			var selected = d3.select(this);
+			var name = selected.text();
 			node.attr("opacity", 1);
-			link.attr("opacity", 1);
+			link.attr("opacity", 0.5);
+
 			linkText.attr("opacity", 0);
+			link.each(function(d) {
+				if (d.source.name === name || d.target.name === name) {
+					var id = d3.select(this).attr('id');
+					var selected = linkText.filter(function(d, i) {
+						return i !== id;
+					});
+					selected.style("opacity", "0");
+				}
+			});
 		}
 
 
@@ -263,7 +281,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.size([width, height])
 			.linkDistance(80)
 			.linkStrength(0.3)
-			.charge(-300)
+			.charge(-200)
 			.friction(0.7)
 			.gravity(0.001);
 
@@ -333,7 +351,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.append("path")
 				.attr('d', 'M0,-5L10,0L0,5')
 				.attr('fill', '#000')
-				.style("opacity", lineOpacity);
+			.style("opacity", lineOpacity);
 
 			node = svg.selectAll(".node")
 				.data(nodes);
@@ -375,26 +393,32 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			link = svg.selectAll(".link")
 				.data(links);
 
-			var txt = svg.selectAll(".text")
-			.data(links);
+			linkLabel = svg.selectAll(".text")
+				.data(links);
 
 
 			link.exit().remove();
 			var linkEnter = link.enter().insert("line", ".node")
 				.attr("class", "link")
+				.attr("id", function(d, i) {
+					return i;
+				})
 				.attr("opacity", lineOpacity)
 				//.attr("class", "link")
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 2);
 
-				var textEnter = txt.enter().insert("g",".node")
-				.attr("class","text");
+			var textEnter = linkLabel.enter().append("g")
+				.attr("class", "text")
+				.attr("tag", function(d, i) {
+					return "linkId_" + i;
+				});
 
 			linkText = textEnter
 				.append("text")
 				.attr("opacity", 0)
 				.text(function(d) {
-					return d.name;
+					return d.name; //Can be dynamic via d object 
 				});
 
 
