@@ -66,6 +66,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return d.name != selectedVal;
 				});
 				selected.style("opacity", "0");
+				link.style("opacity", "0");
 
 				d3.selectAll(".node, .link").transition()
 					.duration(2000)
@@ -483,7 +484,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			force
 				.links(links)
 				.nodes(nodes)
-				.linkDistance(110)
+				.linkDistance(80)
 				.linkStrength(0.3)
 				.charge(-300)
 				.friction(0.7)
