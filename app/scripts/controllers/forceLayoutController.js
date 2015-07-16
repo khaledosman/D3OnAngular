@@ -95,12 +95,13 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 				} else if (value === "Plain") {
 					object = value[1];
 				}
-				//console.log(object);
-				//console.log("name space -->", namespace);
-				//console.log("subject", subject);
-				//console.log("predicate", predicate);
-				//console.log("object", object);
 
+				/*				
+								console.log("name space -->", space);
+								console.log("subject", subject);
+								console.log("predicate", predicate);
+								console.log("object", object);
+				*/
 				if (subject && space === "itonics" && valueSpace === "itonics" && !$scope.isProperty(subject) && !$scope.isProperty(object)) {
 					var subjectNode = $scope.createOrFindNode(subject, space);
 					var objectNode = $scope.createOrFindNode(object, space);
