@@ -20,6 +20,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 	function Graph(scope, element, attr) {
 		var nodes = [],
 			links = [],
+			counter,
 			root = {},
 			optArray = [],
 			radius = 8,
@@ -27,10 +28,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			link, node, linkText, line, linkLabel;
 
 		scope.addNode = function(name, id) {
+			counter++;
+			console.log(counter);
 			nodes.push({
 				"name": name,
-				"id": id
+				"id": counter
 			});
+
 			update();
 
 			var prefix = "http://itonics.co/itonics#";
@@ -87,6 +91,10 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			update();
 		};
 
+		scope.$watch('counter', function(newval, oldval) {
+			counter = newval;
+		});
+
 		function mouseover() {
 
 			var selected = d3.select(this);
@@ -141,7 +149,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		scope.removeNode = function(id) {
 
 			var i = 0;
-			var n = scope.findNode(id);
+			//var n = scope.findNode(id);
+			var n = nodes[0];
 
 			while (i < links.length) {
 				if ((links[i].source == n) || (links[i].target == n)) {
@@ -154,12 +163,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		};
 
 		scope.removeLink = function(source, target) {
-			for (var i = 0; i < links.length; i++) {
+			/*for (var i = 0; i < links.length; i++) {
 				if (links[i].source.id == source && links[i].target.id == target) {
 					links.splice(i, 1);
 					break;
 				}
-			}
+			}*/
+			links.pop();
 			update();
 		};
 
@@ -175,11 +185,17 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		};
 
 		scope.addLink = function(source, target, value) {
-			links.push({
+			/*links.push({
 				"source": scope.findNode(source),
 				"target": scope.findNode(target),
 				"value": value
+			});*/
+			links.push({
+				"source": scope.findNode(Math.floor(Math.random() * (nodes.length - 2 + 1)) + 1),
+				"target": scope.findNode(Math.floor(Math.random() * (nodes.length - 2 + 1)) + 1),
+				"value": scope.findNode(Math.floor(Math.random() * (8 - 1 + 1)) + 1)
 			});
+
 			update();
 		};
 
@@ -351,7 +367,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.append("path")
 				.attr('d', 'M0,-5L10,0L0,5')
 				.attr('fill', '#000')
-			.style("opacity", lineOpacity);
+				.style("opacity", lineOpacity);
 
 			node = svg.selectAll(".node")
 				.data(nodes);

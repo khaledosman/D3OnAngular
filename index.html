@@ -15,6 +15,8 @@
 <script src="app/scripts/controllers/treeLayoutController.js"></script>
 <script src="app/scripts/directives/treeLayout.js"></script>
 <script src="app/scripts/controllers/forceLayoutController.js"></script>
+
+<script src="app/scripts/controllers/demoController.js"></script>
 <script src="app/scripts/directives/forceLayout.js"></script>
 <body ng-app="myApp">
 
@@ -32,8 +34,12 @@
 
 
 <div ng-controller = "forceLayoutController">
+<force-layout nodes="nodes" links="links" counter="counter"></force-layout>
+</div>
+<!--
+<div ng-controller = "demoController">
 <force-layout nodes="nodes" links="links"></force-layout>
 </div>
-
+-->
 
 </body>
