@@ -20,6 +20,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 	function Graph(scope, element, attr) {
 		var nodes = [],
 			links = [],
+			root = {},
 			optArray = [],
 			radius = 8,
 			padding = 1,
@@ -272,10 +273,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			nodes = newval;
 
 			console.log('nodes changed', nodes);
-			root = {
-				nodes: nodes,
-				links: links
-			};
+			root.nodes = nodes;
+
 
 			graphRec = JSON.parse(JSON.stringify(root));
 			updateAutoComplete(nodes);
@@ -306,10 +305,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
 			console.log('links changed', links);
-			root = {
-				nodes: nodes,
-				links: links
-			};
+			root.links = links;
 
 			graphRec = JSON.parse(JSON.stringify(root));
 			update();
@@ -379,19 +375,23 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			link = svg.selectAll(".link")
 				.data(links);
 
+			var txt = svg.selectAll(".text")
+			.data(links);
+
+
 			link.exit().remove();
-
-			var linkEnter = link.enter().insert("g", ".node")
-				.attr("class", "link");
-
-			line = linkEnter
-				.append("line")
+			var linkEnter = link.enter().insert("line", ".node")
+				.attr("class", "link")
 				.attr("opacity", lineOpacity)
 				//.attr("class", "link")
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 2);
 
-			linkText = linkEnter.append("text")
+				var textEnter = txt.enter().insert("g",".node")
+				.attr("class","text");
+
+			linkText = textEnter
+				.append("text")
 				.attr("opacity", 0)
 				.text(function(d) {
 					return d.name;
@@ -406,8 +406,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			//Creates the graph data structure out of the json data
 			force
-				.links(links)
 				.nodes(nodes)
+				.links(links)
 				.start();
 
 		};
@@ -429,49 +429,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		force.on("tick", function() {
 
 
-			/*line.attr("d", function(d) {
-			 var x1 = d.source.x,
-			 y1 = d.source.y,
-			 x2 = d.target.x,
-			 y2 = d.target.y,
-			 dx = x2 - x1,
-			 dy = y2 - y1,
-			 dr = Math.sqrt(dx * dx + dy * dy),
-
-			 // Defaults for normal edge.
-			 drx = dr,
-			 dry = dr,
-			 xRotation = 0, // degrees
-			 largeArc = 0, // 1 or 0
-			 sweep = 1; // 1 or 0
-
-			 // Self edge.
-			 if (x1 === x2 && y1 === y2) {
-			 // Fiddle with this angle to get loop oriented.
-			 xRotation = -45;
-
-			 // Needs to be 1.
-			 largeArc = 1;
-
-			 // Change sweep to change orientation of loop.
-			 //sweep = 0;
-
-			 // Make drx and dry different to get an ellipse
-			 // instead of a circle.
-			 drx = 30;
-			 dry = 20;
-
-			 // For whatever reason the arc collapses to a point if the beginning
-			 // and ending points of the arc are the same, so kludge it.
-			 x2 = x2 + 1;
-			 y2 = y2 + 1;
-			 }
-
-			 return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
-			 });
-			 */
-
-			line.attr("x1", function(d) {
+			link.attr("x1", function(d) {
 					return d.source.x;
 				})
 				.attr("y1", function(d) {
@@ -489,12 +447,12 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," +
 						(d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
 				});
-
 			node
 				.attr("transform", function(d) {
 					return "translate(" + d.x + "," + d.y + ")";
 				})
 				.each(collide(0.6));
+
 
 		});
 
