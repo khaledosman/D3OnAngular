@@ -284,11 +284,17 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			optArray = optArray.sort();
 			$(function() {
 				$("#search").autocomplete({
-					source: optArray
-				});
+						source: optArray
+					})
+					.keypress(function(e) {
+						if (e.keyCode == 13) {
+							e.preventDefault();
+							scope.searchNode(this.value);
+							$(this).autocomplete('close');
+						}
+					});
 			});
-		}
-
+		};
 
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
