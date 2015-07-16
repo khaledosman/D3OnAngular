@@ -1,9 +1,8 @@
-  body
-{
+body {
     text-align: center;
 }
-donut-chart
-{
+
+donut-chart {
     display: inline-block;
 
     width: 250px;
@@ -12,8 +11,7 @@ donut-chart
     cursor: pointer;
 }
 
-tree-layout
-{
+tree-layout {
     display: inline-block;
 
     width: 1250px;
@@ -22,18 +20,14 @@ tree-layout
     cursor: pointer;
 }
 
-.node circle
-{
+.node circle {
     cursor: pointer;
-
-    opacity: 1;
 
     stroke: #3182bd;
     stroke-width: 1.5px;
 }
 
-text
-{
+text {
     font: 10px sans-serif;
 
     pointer-events: none;
@@ -41,33 +35,28 @@ text
     text-anchor: middle;
 }
 
-line.link
-{
+line.link {
     cursor: pointer;
 
     fill: none;
-    stroke: #9ecae1;
-    stroke-width: 2.1px;
+    stroke: #000;
+    /*stroke-width: 2.1px;*/
 }
 
-link text
-{
+link text {
     font: 100px;
 }
 
-.node :hover
-{
+.node :hover {
     /*opacity: 1;*/
 }
 
-.link
-{
-    stroke: #999;
-    stroke-opacity: .7;
+.link {
+    stroke: #000;
+    /*stroke-opacity: .7;*/
 }
 
-d3-tip
-{
+d3-tip {
     line-height: 1;
 
     color: black;
