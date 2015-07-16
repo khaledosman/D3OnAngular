@@ -23,7 +23,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			optArray = [],
 			radius = 8,
 			padding = 1,
-			link, node, linkText;
+			link, node, linkText, line;
 
 		scope.addNode = function(name, id) {
 			nodes.push({
@@ -40,17 +40,18 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				prefix.concat("predicate"),
 				prefix.concat("object")
 			];
+			var createAssertionEvent = function(type, assertion) {
+				var AssertionEvent = {
+					"type": type,
+					"newAssertion": assertion
+				};
+				return AssertionEvent;
+			};
+
 			console.log(createAssertionEvent("ADDED", Assertion));
 
-			/*
-			 var createAssertionEvent = function(type, assertion) {
-			 var AssertionEvent = {
-			 "type": type,
-			 "newAssertion": assertion
-			 };
-			 return AssertionEvent;
-			 };
-			 */
+
+
 		};
 
 		scope.searchNode = function searchNode() {
@@ -258,7 +259,12 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		//Set up the force layout
 		var force = d3.layout.force()
-			.size([width, height]);
+			.size([width, height])
+			.linkDistance(80)
+			.linkStrength(0.3)
+			.charge(-300)
+			.friction(0.7)
+			.gravity(0.001);
 
 
 		scope.$watch('nodes', function(newval, oldval) {
@@ -295,7 +301,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 						}
 					});
 			});
-		};
+		}
 
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
@@ -311,7 +317,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 
 		var update = function() {
-			var lineOpacity = .5;
+			var lineOpacity = 0.5;
 
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
@@ -333,31 +339,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.attr('fill', '#000')
 				.style("opacity", lineOpacity);
 
-
-			//Create all the line svgs but without locations yet
-			link = svg.selectAll(".link")
-				.data(links);
-
-			link.exit().remove();
-
-			var linkEnter = link.enter().insert("g", ".node")
-				.attr("class", "link");
-
-			var line = linkEnter
-				.append("line")
-				.attr("opacity", lineOpacity)
-				//.attr("class", "link")
-				.style("marker-end", "url(#arrow)")
-				.attr("stroke-width", 2);
-
-			linkText = linkEnter.append("text")
-				.attr("opacity", 0)
-				.text(function(d) {
-					return d.name;
-				});
-
-
-			//Do the same with the circles for the nodes - no
 			node = svg.selectAll(".node")
 				.data(nodes);
 
@@ -393,105 +374,129 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				});
 
 
-			function setText(textElmt, str) {
-				textElmt.textContent = str;
-				var box = textElmt.getBBox();
-				var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-				//rect.style("fill","red");
-				rect.setAttribute('fill', 'transparent');
-				rect.setAttribute("border", "1px solid #cccccc");
 
-				for (var n in box) {
-					rect.setAttribute(n, box[n]);
-				}
-				textElmt.parentNode.insertBefore(rect, textElmt);
-			}
+			//Create all the line svgs but without locations yet
+			link = svg.selectAll(".link")
+				.data(links);
+
+			link.exit().remove();
+
+			var linkEnter = link.enter().insert("g", ".node")
+				.attr("class", "link");
+
+			line = linkEnter
+				.append("line")
+				.attr("opacity", lineOpacity)
+				//.attr("class", "link")
+				.style("marker-end", "url(#arrow)")
+				.attr("stroke-width", 2);
+
+			linkText = linkEnter.append("text")
+				.attr("opacity", 0)
+				.text(function(d) {
+					return d.name;
+				});
+
+
+			//Do the same with the circles for the nodes - no
+
 
 
 			//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-			force.on("tick", function() {
 
-
-				/*line.attr("d", function(d) {
-				 var x1 = d.source.x,
-				 y1 = d.source.y,
-				 x2 = d.target.x,
-				 y2 = d.target.y,
-				 dx = x2 - x1,
-				 dy = y2 - y1,
-				 dr = Math.sqrt(dx * dx + dy * dy),
-
-				 // Defaults for normal edge.
-				 drx = dr,
-				 dry = dr,
-				 xRotation = 0, // degrees
-				 largeArc = 0, // 1 or 0
-				 sweep = 1; // 1 or 0
-
-				 // Self edge.
-				 if (x1 === x2 && y1 === y2) {
-				 // Fiddle with this angle to get loop oriented.
-				 xRotation = -45;
-
-				 // Needs to be 1.
-				 largeArc = 1;
-
-				 // Change sweep to change orientation of loop.
-				 //sweep = 0;
-
-				 // Make drx and dry different to get an ellipse
-				 // instead of a circle.
-				 drx = 30;
-				 dry = 20;
-
-				 // For whatever reason the arc collapses to a point if the beginning
-				 // and ending points of the arc are the same, so kludge it.
-				 x2 = x2 + 1;
-				 y2 = y2 + 1;
-				 }
-
-				 return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
-				 });
-				 */
-
-				line.attr("x1", function(d) {
-						return d.source.x;
-					})
-					.attr("y1", function(d) {
-						return d.source.y;
-					})
-					.attr("x2", function(d) {
-						return d.target.x;
-					})
-					.attr("y2", function(d) {
-						return d.target.y;
-					});
-
-				linkText
-					.attr("transform", function(d) {
-						return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," +
-							(d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
-					});
-
-				node
-					.attr("transform", function(d) {
-						return "translate(" + d.x + "," + d.y + ")";
-					})
-					.each(collide(0.6));
-
-			});
 			//Creates the graph data structure out of the json data
 			force
 				.links(links)
 				.nodes(nodes)
-				.linkDistance(80)
-				.linkStrength(0.3)
-				.charge(-300)
-				.friction(0.7)
-				.gravity(0.001)
 				.start();
 
 		};
+
+		function setText(textElmt, str) {
+			textElmt.textContent = str;
+			var box = textElmt.getBBox();
+			var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			//rect.style("fill","red");
+			rect.setAttribute('fill', 'transparent');
+			rect.setAttribute("border", "1px solid #cccccc");
+
+			for (var n in box) {
+				rect.setAttribute(n, box[n]);
+			}
+			textElmt.parentNode.insertBefore(rect, textElmt);
+		}
+
+		force.on("tick", function() {
+
+
+			/*line.attr("d", function(d) {
+			 var x1 = d.source.x,
+			 y1 = d.source.y,
+			 x2 = d.target.x,
+			 y2 = d.target.y,
+			 dx = x2 - x1,
+			 dy = y2 - y1,
+			 dr = Math.sqrt(dx * dx + dy * dy),
+
+			 // Defaults for normal edge.
+			 drx = dr,
+			 dry = dr,
+			 xRotation = 0, // degrees
+			 largeArc = 0, // 1 or 0
+			 sweep = 1; // 1 or 0
+
+			 // Self edge.
+			 if (x1 === x2 && y1 === y2) {
+			 // Fiddle with this angle to get loop oriented.
+			 xRotation = -45;
+
+			 // Needs to be 1.
+			 largeArc = 1;
+
+			 // Change sweep to change orientation of loop.
+			 //sweep = 0;
+
+			 // Make drx and dry different to get an ellipse
+			 // instead of a circle.
+			 drx = 30;
+			 dry = 20;
+
+			 // For whatever reason the arc collapses to a point if the beginning
+			 // and ending points of the arc are the same, so kludge it.
+			 x2 = x2 + 1;
+			 y2 = y2 + 1;
+			 }
+
+			 return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+			 });
+			 */
+
+			line.attr("x1", function(d) {
+					return d.source.x;
+				})
+				.attr("y1", function(d) {
+					return d.source.y;
+				})
+				.attr("x2", function(d) {
+					return d.target.x;
+				})
+				.attr("y2", function(d) {
+					return d.target.y;
+				});
+
+			linkText
+				.attr("transform", function(d) {
+					return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," +
+						(d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
+				});
+
+			node
+				.attr("transform", function(d) {
+					return "translate(" + d.x + "," + d.y + ")";
+				})
+				.each(collide(0.6));
+
+		});
 
 	}
 
