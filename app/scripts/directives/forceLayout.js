@@ -329,6 +329,12 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.on('mousemove', svgmousemove)
 			.on('mouseup', svgmouseup);
 
+		drag_line = svg.insert('svg:path')
+			.attr('class', 'dragline hidden')
+			.style('stroke-width', 2)
+			.attr('d', 'M0,0L0,0');
+
+
 		function svgmousedown() {
 			// prevent I-bar on drag
 			//d3.event.preventDefault();
@@ -358,7 +364,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' +
 				d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
 
-			console.log(drag_line.attr('d'));
 			update();
 		}
 
@@ -455,11 +460,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			var lineOpacity = 0.5;
 
-			drag_line = svg.append('svg:path')
-				.data(links)
-				.attr('class', 'dragline hidden')
-				.attr('d', 'M0,0L0,0');
-
 			//add our arrow styles
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
@@ -492,7 +492,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
 				.on('dblclick', releasenode)
-			.on('mousedown', function(d) {
+				.on('mousedown', function(d) {
 					if (d3.event.ctrlKey) return;
 
 					// select node
@@ -503,7 +503,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 					// reposition drag line
 					drag_line
-						.style('marker-end', 'url(#end-arrow)')
+						.style('marker-end', 'url(#arrow)')
 						.classed('hidden', false)
 						.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
 
@@ -560,6 +560,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					selected_node = null;
 					update();
 				});
+
+
 
 			//.on('mouseover', mouseover)
 			//.on('mouseout', mouseout)
@@ -658,21 +660,23 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		//called on every tick of the force graph, reposition everything
 		force.on("tick", function() {
+			/*
+						drag_line.attr('d', function(d) {
+							var deltaX = d.target.x - d.source.x,
+								deltaY = d.target.y - d.source.y,
+								dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+								normX = deltaX / dist,
+								normY = deltaY / dist,
+								sourcePadding = d.left ? 17 : 12,
+								targetPadding = d.right ? 17 : 12,
+								sourceX = d.source.x + (sourcePadding * normX),
+								sourceY = d.source.y + (sourcePadding * normY),
+								targetX = d.target.x - (targetPadding * normX),
+								targetY = d.target.y - (targetPadding * normY);
 
-			drag_line.attr('d', function(d) {
-				var deltaX = d.target.x - d.source.x,
-					deltaY = d.target.y - d.source.y,
-					dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-					normX = deltaX / dist,
-					normY = deltaY / dist,
-					sourcePadding = d.left ? 17 : 12,
-					targetPadding = d.right ? 17 : 12,
-					sourceX = d.source.x + (sourcePadding * normX),
-					sourceY = d.source.y + (sourcePadding * normY),
-					targetX = d.target.x - (targetPadding * normX),
-					targetY = d.target.y - (targetPadding * normY);
-				return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-			});
+						console.log(drag_line.attr('d'));
+							return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+						});*/
 
 			//x1,y1 is point1 .. x2,y2 is point2, link is the line passing through them
 			//reposition that such that it doesn't go out of canvas bounds
