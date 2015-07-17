@@ -286,13 +286,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		//Constants for the SVG
 		var el = element[0];
-		var width = el.clientWidth,
-			height = el.clientHeight;
+		var width = window.innerWidth,
+			height = window.innerHeight;
 
 		//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 		var svg = d3.select(el).append("svg")
 			.style("width", width)
-			.attr("height", height);
+			.style("height", height);
 
 		//Set up the colour scale
 		var color = d3.scale.category20();
