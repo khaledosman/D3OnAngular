@@ -329,9 +329,10 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.on('mousemove', svgmousemove)
 			.on('mouseup', svgmouseup);
 
-		d3.select(window)
+	/*	d3.select(window)
 			.on('keydown', keydown)
 			.on('keyup', keyup);
+*/
 
 		drag_line = svg.insert('svg:path')
 			.attr('class', 'dragline hidden')
