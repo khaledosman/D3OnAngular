@@ -338,6 +338,44 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.style('stroke-width', 2)
 			.attr('d', 'M0,0L0,0');
 
+		// define arrow markers for graph links
+
+		svg.append('svg:defs').append('svg:marker')
+				.attr("id", "arrow")
+				.attr("viewBox", "0 -5 10 10")
+				.attr("refX", 19)
+				.attr("refY", 0)
+				.attr("markerWidth", 6)
+				.attr("markerHeight", 6)
+				.attr("orient", "auto")
+				.append("path")
+				.attr('d', 'M0,-5L10,0L0,5')
+				.attr('fill', '#000')
+				.style("opacity", 0.5);
+
+
+		svg.append('svg:defs').append('svg:marker')
+			.attr('id', 'end-arrow')
+			.attr('viewBox', '0 -5 10 10')
+			.attr('refX', 6)
+			.attr('markerWidth', 3)
+			.attr('markerHeight', 3)
+			.attr('orient', 'auto')
+			.append('svg:path')
+			.attr('d', 'M0,-5L10,0L0,5')
+			.attr('fill', '#000');
+
+		svg.append('svg:defs').append('svg:marker')
+			.attr('id', 'start-arrow')
+			.attr('viewBox', '0 -5 10 10')
+			.attr('refX', 4)
+			.attr('markerWidth', 3)
+			.attr('markerHeight', 3)
+			.attr('orient', 'auto')
+			.append('svg:path')
+			.attr('d', 'M10,-5L0,0L10,5')
+			.attr('fill', '#000');
+
 
 		function keydown() {
 			d3.event.preventDefault();
@@ -532,28 +570,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			var lineOpacity = 0.5;
 
-			//add our arrow styles
-			var markers = svg.selectAll("marker")
-				.data(["arrow"]);
-
-			markers.exit().remove();
-
-			markers.enter().append("marker")
-				.attr("id", function(d) {
-					return d;
-				})
-				.attr("viewBox", "0 -5 10 10")
-				.attr("refX", 19)
-				.attr("refY", 0)
-				.attr("markerWidth", 6)
-				.attr("markerHeight", 6)
-				.attr("orient", "auto")
-				.append("path")
-				.attr('d', 'M0,-5L10,0L0,5')
-				.attr('fill', '#000')
-				.style("opacity", lineOpacity);
-
-
 			//create our nodes dom containers and bind data to them
 			node = svg.selectAll(".node")
 				.data(nodes);
@@ -575,7 +591,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 					// reposition drag line
 					drag_line
-						.style('marker-end', 'url(#arrow)')
+				.style('marker-end', 'url(#arrow)')
 						.classed('hidden', false)
 						.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
 
