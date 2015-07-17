@@ -491,7 +491,76 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
-				.on('dblclick', releasenode);
+				.on('dblclick', releasenode)
+			.on('mousedown', function(d) {
+					if (d3.event.ctrlKey) return;
+
+					// select node
+					mousedown_node = d;
+					if (mousedown_node === selected_node) selected_node = null;
+					else selected_node = mousedown_node;
+					selected_link = null;
+
+
+					// reposition drag line
+					drag_line
+						.style('marker-end', 'url(#end-arrow)')
+						.classed('hidden', false)
+						.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
+
+					update();
+				})
+				.on('mouseup', function(d) {
+					if (!mousedown_node) return;
+
+					// needed by FF
+					drag_line
+						.classed('hidden', true)
+						.style('marker-end', '');
+
+					// check for drag-to-self
+					mouseup_node = d;
+					if (mouseup_node === mousedown_node) {
+						resetMouseVars();
+						return;
+					}
+
+					// add link to graph (update if exists)
+					// NB: links are strictly source < target; arrows separately specified by booleans
+					var source, target, direction;
+					if (mousedown_node.id < mouseup_node.id) {
+						source = mousedown_node;
+						target = mouseup_node;
+						direction = 'right';
+					} else {
+						source = mouseup_node;
+						target = mousedown_node;
+						direction = 'left';
+					}
+
+					var link;
+					link = links.filter(function(l) {
+						return (l.source === source && l.target === target);
+					})[0];
+
+					if (link) {
+						link[direction] = true;
+					} else {
+						link = {
+							source: source,
+							target: target,
+							left: false,
+							right: false
+						};
+						link[direction] = true;
+						links.push(link);
+					}
+
+					// select new link
+					selected_link = link;
+					selected_node = null;
+					update();
+				});
 			//.on('mouseover', mouseover)
 			//.on('mouseout', mouseout)
 			//.call(node_drag);
@@ -639,7 +708,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return "translate(" + d.x + "," + d.y + ")";
 				}).each(collide(0.6));
 
-
+				
 
 		});
 
