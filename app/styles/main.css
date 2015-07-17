@@ -40,16 +40,6 @@ text
 
     text-anchor: middle;
 }
-
-line.link
-{
-    cursor: pointer;
-
-    fill: none;
-    stroke: #000;
-    /*stroke-width: 2.1px;*/
-}
-
 link text
 {
     font: 100px;
@@ -72,59 +62,76 @@ d3-tip
     color: black;
 }
 
-svg {
-  background-color: #FFF;
-  cursor: default;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
+svg
+{
+    cursor: default;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+
+    background-color: #fff;
+
+         -o-user-select: none;
 }
 
-svg:not(.active):not(.ctrl) {
-  cursor: crosshair;
+svg:not(.active):not(.ctrl)
+{
+    cursor: crosshair;
 }
 
-.link path{
-  fill: none;
-  stroke: #000;
-  stroke-width: 4px;
-  cursor: default;
+.link path
+{
+    cursor: default;
+
+    fill: none;
+    stroke: #000;
+    stroke-width: 4px;
 }
 
-svg:not(.active):not(.ctrl) path.link {
-  cursor: pointer;
+svg:not(.active):not(.ctrl) path.link
+{
+    cursor: pointer;
 }
 
-.link.selected {
-  stroke-dasharray: 10,2;
+.link.selected
+{
+    stroke-dasharray: 10,2;
 }
 
-.link.dragline {
-  pointer-events: none;
+.link.dragline
+{
+    pointer-events: none;
 }
 
-.link.hidden {
-  stroke-width: 0;
+.link.hidden
+{
+    stroke-width: 0;
 }
 
-.node {
-  stroke-width: 1.5px;
-  cursor: pointer;
+.node
+{
+    cursor: pointer;
+
+    stroke-width: 1.5px;
 }
 
-.node.reflexive {
-  stroke: #000 !important;
-  stroke-width: 2.5px;
+.node.reflexive
+{
+    stroke: #000 !important;
+    stroke-width: 2.5px;
 }
 
-text {
-  font: 12px sans-serif;
-  pointer-events: none;
+text
+{
+    font: 12px sans-serif;
+
+    pointer-events: none;
 }
 
-text.id {
-  text-anchor: middle;
-  font-weight: bold;
+text.id
+{
+    font-weight: bold;
+
+    text-anchor: middle;
 }

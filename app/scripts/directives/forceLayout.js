@@ -463,8 +463,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				};
 			node.x = point[0];
 			node.y = point[1];
-			nodes.push(node);
-
+			//nodes.push(node);
+			scope.addNode("test", counter);
 			update();
 		}
 
@@ -594,6 +594,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					drag_line
 						.style('marker-end', 'url(#arrow)')
 						.classed('hidden', false)
+						.style('stroke', 'gray')
 						.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
 
 					update();
