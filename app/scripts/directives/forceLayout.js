@@ -23,6 +23,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		//define our variables, might need to be cleaned
 		var nodes = [],
 			links = [],
+			drag_line,
 			circle,
 			counter,
 			root = {},
@@ -31,10 +32,25 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			padding = 1,
 			link, node, linkText, line, linkLabel;
 
+
+		// mouse event vars
+		var selected_node = null,
+			selected_link = null,
+			mousedown_link = null,
+			mousedown_node = null,
+			mouseup_node = null;
+
+		function resetMouseVars() {
+			mousedown_node = null;
+			mouseup_node = null;
+			mousedown_link = null;
+		}
 		//Constants for the SVG
 		var el = element[0];
 		var width = window.innerWidth,
 			height = window.innerHeight;
+
+
 
 		//helper functions to add/remove/search for stuff
 
@@ -306,7 +322,68 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 		var svg = d3.select(el).append("svg")
 			.style("width", width)
-			.style("height", height);
+			.style("height", height)
+			.on('mousedown', svgmousedown)
+			.on('mousemove', svgmousemove)
+			.on('mouseup', svgmouseup);
+
+		function svgmousedown() {
+			// prevent I-bar on drag
+			//d3.event.preventDefault();
+
+			// because :active only works in WebKit?
+			svg.classed('active', true);
+
+			if (d3.event.ctrlKey || mousedown_node || mousedown_link) return;
+
+			// insert new node at point
+			var point = d3.mouse(this),
+				node = {
+					id: ++counter,
+					reflexive: false
+				};
+			node.x = point[0];
+			node.y = point[1];
+			nodes.push(node);
+
+			update();
+		}
+
+		function svgmousemove() {
+			if (!mousedown_node) return;
+
+			console.log(mousedown_node.x);
+			// update drag line
+			drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' +
+				d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
+
+			update();
+		}
+
+		function svgmouseup() {
+			if (mousedown_node) {
+				// hide drag line
+				drag_line
+					.classed('hidden', true)
+					.style('marker-end', '');
+			}
+
+			// because :active only works in WebKit?
+			svg.classed('active', false);
+
+			// clear mouse event vars
+			resetMouseVars();
+		}
+
+		function spliceLinksForNode(node) {
+			var toSplice = links.filter(function(l) {
+				return (l.source === node || l.target === node);
+			});
+			toSplice.map(function(l) {
+				links.splice(links.indexOf(l), 1);
+			});
+		}
+
 
 		//Set up the colour scale
 		var color = d3.scale.category20();
@@ -376,6 +453,10 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			var lineOpacity = 0.5;
 
+			drag_line = svg.append('svg:path')
+				.attr('class', 'link dragline hidden')
+				.attr('d', 'M0,0L0,0');
+
 			//add our arrow styles
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
@@ -400,23 +481,26 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			//create our nodes dom containers and bind data to them
 			node = svg.selectAll(".node")
-				.data(nodes);
+				.data(nodes)
+				.classed("selected", function(d) {
+					return d === selected_node;
+				});
 
 			//remove dom elements that are not bound to data
 			node.exit().remove();
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
-				.on('dblclick', releasenode)
-				.on('mouseover', mouseover)
-				.on('mouseout', mouseout)
-				.call(node_drag);
+				.on('dblclick', releasenode);
+			//.on('mouseover', mouseover)
+			//.on('mouseout', mouseout)
+			//.call(node_drag);
 
 			//append a circle to our node dom container
 			var circle = nodeEnter.append("circle")
 				.attr("r", radius)
-				.style("fill", function(d) {
-					return color(d.group);
+				.style('fill', function(d) {
+					return (d === selected_node) ? d3.rgb(color(d.group)).brighter().toString() : color(d.group);
 				});
 
 			//append text on top of our node container
@@ -431,11 +515,19 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			//Create our links containers and bind data to them
 			link = svg.selectAll(".link")
-				.data(links);
+				.data(links)
+				.classed("selected", function(d) {
+					return d === selected_link;
+				});
+
+
 
 			//create a container for relationship labels with the links array bound to them
 			linkLabel = svg.selectAll(".text")
-				.data(links);
+				.data(links)
+				.classed("selected", function(d) {
+					return d === selected_link;
+				});
 
 
 			//remove unused DOM elements to avoid memory leak
@@ -445,17 +537,34 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			//attach a line to every DOM bound to a datum
 			var linkEnter = link.enter().insert("line", ".node")
 				.attr("class", "link")
+				.classed("selected", function(d) {
+					return d === selected_link;
+				})
 				//giving them id by index to connect relationship names with links
 				.attr("id", function(d, i) {
 					return i;
 				})
-				.attr("opacity", lineOpacity)
+
+			.attr("opacity", lineOpacity)
 				.style("marker-end", "url(#arrow)")
-				.attr("stroke-width", 2);
+				.attr("stroke-width", 2)
+				.on('mousedown', function(d) {
+					if (d3.event.ctrlKey) return;
+
+					// select link
+					mousedown_link = d;
+					if (mousedown_link === selected_link) selected_link = null;
+					else selected_link = mousedown_link;
+					selected_node = null;
+					update();
+				});
 
 			//attach a g with text to every datum in links 
-			var textEnter = linkLabel.enter().insert("g",".linK")
+			var textEnter = linkLabel.enter().insert("g", ".linK")
 				.attr("class", "text")
+				.classed("selected", function(d) {
+					return d === selected_link;
+				})
 				//give them a tag attribute with link ids
 				.attr("tag", function(d, i) {
 					return "linkId_" + i;
@@ -480,6 +589,21 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		//called on every tick of the force graph, reposition everything
 		force.on("tick", function() {
+
+			/*drag_line.attr('d', function(d) {
+				var deltaX = d.target.x - d.source.x,
+					deltaY = d.target.y - d.source.y,
+					dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+					normX = deltaX / dist,
+					normY = deltaY / dist,
+					sourcePadding = d.left ? 17 : 12,
+					targetPadding = d.right ? 17 : 12,
+					sourceX = d.source.x + (sourcePadding * normX),
+					sourceY = d.source.y + (sourcePadding * normY),
+					targetX = d.target.x - (targetPadding * normX),
+					targetY = d.target.y - (targetPadding * normY);
+				return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+			});*/
 
 			//x1,y1 is point1 .. x2,y2 is point2, link is the line passing through them
 			//reposition that such that it doesn't go out of canvas bounds
@@ -514,6 +638,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					d.y = Math.max(radius, Math.min(height - radius, d.y));
 					return "translate(" + d.x + "," + d.y + ")";
 				}).each(collide(0.6));
+
+
 
 		});
 
