@@ -28,13 +28,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			link, node, linkText, line, linkLabel;
 
 		scope.addNode = function(name, id) {
-			counter++;
+			
 			console.log(counter);
 			nodes.push({
 				"name": name,
 				"id": counter
 			});
-
+			counter++;
 			update();
 
 			var prefix = "http://itonics.co/itonics#";
@@ -150,15 +150,16 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		scope.removeNode = function(id) {
 
 			var i = 0;
-			//var n = scope.findNode(id);
-			var n = nodes[0];
+			var n = scope.findNode(--counter);
+			console.log(n);
+			//var n = nodes.pop();
 
 			while (i < links.length) {
 				if ((links[i].source == n) || (links[i].target == n)) {
 					links.splice(i, 1);
 				} else i++;
 			}
-			nodes.splice(scope.findNodeIndex(id), 1);
+			nodes.splice(scope.findNodeIndex(id), 1); 
 			updateAutoComplete(nodes);
 			update();
 		};
