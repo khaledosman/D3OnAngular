@@ -477,15 +477,19 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 
 			link.attr("x1", function(d) {
+					d.source.x = Math.max(radius, Math.min(width - radius, d.source.x));
 					return d.source.x;
 				})
 				.attr("y1", function(d) {
+					d.source.y = Math.max(radius, Math.min(height - radius, d.source.y));
 					return d.source.y;
 				})
 				.attr("x2", function(d) {
+					d.target.x = Math.max(radius, Math.min(width - radius, d.target.x));
 					return d.target.x;
 				})
 				.attr("y2", function(d) {
+					d.target.y = Math.max(radius, Math.min(height - radius, d.target.y));
 					return d.target.y;
 				});
 

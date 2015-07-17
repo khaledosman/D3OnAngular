@@ -17,8 +17,8 @@ force-layout
 {
     display: inline-block;
 
-    width: 500px;
-    height: 500px;
+    width: 100%;
+    height: 650px;
 
     cursor: pointer;
 }
