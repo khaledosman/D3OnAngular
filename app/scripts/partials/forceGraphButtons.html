@@ -5,14 +5,16 @@
                ng-model="threshold" ng-change="setThreshold(threshold)"> 10
     </h3>
 </form>
-<button ng-click=removeAllNodes()>remove all nodes</button>
-<button ng-click=removeAllLinks()>remove all links</button>
-<button ng-click=removeNode()>remove node</button>
-<button ng-click=addNode("test",counter)>Add node</button>
-<button ng-click=addLink(nodes[nodes.length-1].id,nodes[nodes.length-2].id)>Add Link</button>
-<button ng-click=removeLink(0,1)>remove link</button> 
-<div class="ui-widget">
-    <input id="search" ng-model="val">
-    <button type="button" ng-click="searchNode()">Search</button>
+
+<button ng-click = removeAllNodes()> remove all nodes </button>
+<button ng-click = removeAllLinks()> remove all links </button>
+<button ng-click = removeNode()> remove node </button>
+<button ng-click = addNode("test",counter)> Add node </button>
+<button ng-click = addLink(nodes[nodes.length-1].id,nodes[nodes.length-2].id)> Add Link </button>
+<button ng-click = removeLink(0,1)> remove link </button> 
+
+<div class = "ui-widget">
+    <input id = "search" ng-model = "val">
+    <button type = "button" ng-click = "searchNode()"> Search </button>
 </div>
 </div>

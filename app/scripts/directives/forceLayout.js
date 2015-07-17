@@ -454,7 +454,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.attr("stroke-width", 2);
 
 			//attach a g with text to every datum in links 
-			var textEnter = linkLabel.enter().append("g")
+			var textEnter = linkLabel.enter().insert("g",".linK")
 				.attr("class", "text")
 				//give them a tag attribute with link ids
 				.attr("tag", function(d, i) {

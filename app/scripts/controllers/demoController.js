@@ -1,10 +1,5 @@
-/**
- * Array.prototype.[method name] allows you to define/overwrite an objects method
- * needle is the item you are searching for
- * this is a special variable tat refers to "this" instance of an Array.
- * returns true if needle is in the array, and false otherwise
- */
 
+//draw without server
 app.controller('demoController', function($scope, $interval, $http) {
 	$scope.shared = {
 		url: 'graph2.json'

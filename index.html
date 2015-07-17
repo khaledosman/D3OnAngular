@@ -25,17 +25,16 @@
  <donut-chart data="shared.data" on-click="chartClicked()" ng-repeat="chart in charts"></donut-chart>  
  </div> 
  
-
   <div ng-controller="treeLayoutController">
   <p>{{shared.url}}</p>
     <tree-layout url="shared.url" tree-layout>
   </div>
 -->
 
-
 <div ng-controller = "forceLayoutController">
 <force-layout nodes="nodes" links="links" counter="counter"></force-layout>
 </div>
+
 <!--
 <div ng-controller = "demoController">
 <force-layout nodes="nodes" links="links"></force-layout>
