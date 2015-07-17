@@ -463,8 +463,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				};
 			node.x = point[0];
 			node.y = point[1];
-			//nodes.push(node);
-			scope.addNode("test", counter);
+			nodes.push(node);
+			//scope.addNode("test", counter);
 			update();
 		}
 
