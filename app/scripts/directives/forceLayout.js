@@ -28,8 +28,12 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			padding = 1,
 			link, node, linkText, line, linkLabel;
 
-		scope.addNode = function(name, id) {
+		//Constants for the SVG
+		var el = element[0];
+		var width = window.innerWidth,
+			height = window.innerHeight;
 
+		scope.addNode = function(name, id) {
 			console.log(counter);
 			nodes.push({
 				"name": name,
@@ -55,9 +59,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			};
 
 			console.log(createAssertionEvent("ADDED", Assertion));
-
-
-
 		};
 
 		scope.searchNode = function searchNode() {
@@ -92,68 +93,34 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			update();
 		};
 
-		scope.$watch('counter', function(newval, oldval) {
-			counter = newval;
-		});
-
-		function mouseover() {
-
-			var selected = d3.select(this);
-			var name = selected.text();
-			//linkText.attr("opacity",1);
-			//linkText.attr("opacity", 1);
-
-			node.attr("opacity", 0.2);
-			link.attr("opacity", 0.1);
-			link.each(function(d) {
-				if (d.source.name === name || d.target.name === name) {
-
-					d3.select(this).attr("opacity", 0.7);
-					var id = d3.select(this).attr('id');
-
-					var selected = linkText.filter(function(d, i) {
-						return i == id;
-					});
-					selected.style("opacity", "1");
-
-					node.each(function(n) {
-						if (n.name === d.source.name || n.name === d.target.name) {
-
-							var self = d3.select(this);
-							self.attr("opacity", 1);
+		function updateAutoComplete(nodes) {
+			optArray = [];
+			for (var i = 0; i < nodes.length - 1; i++) {
+				optArray.push(nodes[i].name);
+			}
+			optArray = optArray.sort();
+			$(function() {
+				$("#search").autocomplete({
+						source: optArray
+					})
+					.keypress(function(e) {
+						if (e.keyCode == 13) {
+							e.preventDefault();
+							scope.searchNode(this.value);
+							$(this).autocomplete('close');
 						}
 					});
-				}
-
-			});
-
-		}
-
-		function mouseout() {
-			var selected = d3.select(this);
-			var name = selected.text();
-			node.attr("opacity", 1);
-			link.attr("opacity", 0.5);
-
-			linkText.attr("opacity", 0);
-			link.each(function(d) {
-				if (d.source.name === name || d.target.name === name) {
-					var id = d3.select(this).attr('id');
-					var selected = linkText.filter(function(d, i) {
-						return i !== id;
-					});
-					selected.style("opacity", "0");
-				}
 			});
 		}
 
-
+		//has a problem when adding links after 
 		scope.removeNode = function(id) {
 
 			var i = 0;
-			var n = scope.findNode(--counter);
-			console.log(n);
+			//var n = scope.findNode(--counter);
+			//console.log(n);
 			//var n = nodes.pop();
+			var n = nodes[0];
 
 			while (i < links.length) {
 				if ((links[i].source == n) || (links[i].target == n)) {
@@ -245,50 +212,79 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			};
 		}
 
+		function mouseover() {
 
+			var selected = d3.select(this);
+			var name = selected.text();
+			//linkText.attr("opacity",1);
+			//linkText.attr("opacity", 1);
 
+			node.attr("opacity", 0.2);
+			link.attr("opacity", 0.1);
+			link.each(function(d) {
+				if (d.source.name === name || d.target.name === name) {
+
+					d3.select(this).attr("opacity", 0.7);
+					var id = d3.select(this).attr('id');
+
+					var selected = linkText.filter(function(d, i) {
+						return i == id;
+					});
+					selected.style("opacity", "1");
+
+					node.each(function(n) {
+						if (n.name === d.source.name || n.name === d.target.name) {
+
+							var self = d3.select(this);
+							self.attr("opacity", 1);
+						}
+					});
+				}
+
+			});
+
+		}
+
+		function mouseout() {
+			var selected = d3.select(this);
+			var name = selected.text();
+			node.attr("opacity", 1);
+			link.attr("opacity", 0.5);
+
+			linkText.attr("opacity", 0);
+			link.each(function(d) {
+				if (d.source.name === name || d.target.name === name) {
+					var id = d3.select(this).attr('id');
+					var selected = linkText.filter(function(d, i) {
+						return i !== id;
+					});
+					selected.style("opacity", "0");
+				}
+			});
+		}
+
+		//called when drag event starts
 		function dragstart(d, i) {
-
+			//deregister mouse listener to prevent overlap between drag and mouseover
 			node.on("mouseover", null).on("mouseout", null);
-			/*	force.charge(0)
-				.linkStrength(1)
-				.friction(0)
-					.charge(0)
-					.gravity(0.05); // stops the force auto positioning before you start dragging*/
 		}
 
-		function dragmove(d, i) {
-			/*d.px += d3.event.dx;
-			d.py += d3.event.dy;
-			d.x += d3.event.dx;
-			d.y += d3.event.dy;
-			force.resume();*/
-		}
+		//dont need to update anything since we're overriding d3's force drag method
+		function dragmove(d, i) {}
 
+		//register listeners again and pin
 		function dragend(d, i) {
 			node.on("mouseover", mouseover).on("mouseout", mouseout);
 			d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
-			/*
-						force
-							.linkDistance(110)
-							.linkStrength(0.3)
-							.charge(-300)
-							.friction(0.7)
-							.gravity(0.001)
-						.resume();*/
 		}
 
+		//unpin
 		function releasenode(d) {
 			d.fixed = false; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
 			force.resume();
 		}
 
-
-		//Constants for the SVG
-		var el = element[0];
-		var width = window.innerWidth,
-			height = window.innerHeight;
-
+		//define our canvas
 		//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 		var svg = d3.select(el).append("svg")
 			.style("width", width)
@@ -297,7 +293,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		//Set up the colour scale
 		var color = d3.scale.category20();
 
-		//Set up the force layout
+		//Set up the force layout attributes, linkdistance, strength and charge are responsible for
+		//repulsion or attraction between nodes
 		var force = d3.layout.force()
 			.size([width, height])
 			.linkDistance(80)
@@ -306,41 +303,20 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.friction(0.7)
 			.gravity(0.001);
 
+		scope.$watch('counter', function(newval, oldval) {
+			counter = newval;
+		});
 
 		scope.$watch('nodes', function(newval, oldval) {
-
 			nodes = newval;
-
 			console.log('nodes changed', nodes);
 			root.nodes = nodes;
-
 			if (nodes && links) {
 				graphRec = JSON.parse(JSON.stringify(root));
 				updateAutoComplete(nodes);
 				update();
 			}
-
 		});
-
-		function updateAutoComplete(nodes) {
-			optArray = [];
-			for (var i = 0; i < nodes.length - 1; i++) {
-				optArray.push(nodes[i].name);
-			}
-			optArray = optArray.sort();
-			$(function() {
-				$("#search").autocomplete({
-						source: optArray
-					})
-					.keypress(function(e) {
-						if (e.keyCode == 13) {
-							e.preventDefault();
-							scope.searchNode(this.value);
-							$(this).autocomplete('close');
-						}
-					});
-			});
-		}
 
 		scope.$watch('links', function(newval, oldval) {
 			links = newval;
@@ -352,10 +328,32 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			}
 		});
 
+		//override drag method to include pin/unpin and deregister mouselisteners
+		var node_drag = force.drag()
+			.on("dragstart", dragstart)
+			.on("drag", dragmove)
+			.on("dragend", dragend);
 
+		function setText(textElmt, str) {
+			textElmt.textContent = str;
+			var box = textElmt.getBBox();
+			var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			//rect.style("fill","red");
+			rect.setAttribute('fill', 'transparent');
+			rect.setAttribute("border", "1px solid #cccccc");
+
+			for (var n in box) {
+				rect.setAttribute(n, box[n]);
+			}
+			textElmt.parentNode.insertBefore(rect, textElmt);
+		}
+
+		//redraw our graph with new data elements
 		var update = function() {
+
 			var lineOpacity = 0.5;
 
+			//add our arrow styles
 			var markers = svg.selectAll("marker")
 				.data(["arrow"]);
 
@@ -376,82 +374,79 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.attr('fill', '#000')
 				.style("opacity", lineOpacity);
 
+
+			//create our nodes dom containers and bind data to them
 			node = svg.selectAll(".node")
 				.data(nodes);
 
-
+			//remove dom elements that are not bound to data
 			node.exit().remove();
-
-			var node_drag = force.drag()
-				.on("dragstart", dragstart)
-				.on("drag", dragmove)
-				.on("dragend", dragend);
 
 			var nodeEnter = node.enter().append("g")
 				.attr("class", "node")
 				.on('dblclick', releasenode)
 				.on('mouseover', mouseover)
 				.on('mouseout', mouseout)
-				.call(node_drag); //Added
+				.call(node_drag);
 
-			circle =
-				nodeEnter.append("circle")
+			//append a circle to our node dom container
+			var circle = nodeEnter.append("circle")
 				.attr("r", radius)
 				.style("fill", function(d) {
 					return color(d.group);
 				});
 
+			//append text on top of our node container
 			var text = nodeEnter.append("text")
 				.attr("dy", "-1.3em")
 				.style("fill", "gray")
-				//.attr("visibility", "hidden")
 				.text(function(d) {
 					setText(this, d.name);
 					return d.name;
 				});
 
 
-
-			//Create all the line svgs but without locations yet
+			//Create our links containers and bind data to them
 			link = svg.selectAll(".link")
 				.data(links);
 
+			//create a container for relationship labels with the links array bound to them
 			linkLabel = svg.selectAll(".text")
 				.data(links);
 
 
+			//remove unused DOM elements to avoid memory leak
 			link.exit().remove();
+			linkLabel.exit().remove();
+
+			//attach a line to every DOM bound to a datum
 			var linkEnter = link.enter().insert("line", ".node")
 				.attr("class", "link")
+				//giving them id by index to connect relationship names with links
 				.attr("id", function(d, i) {
 					return i;
 				})
 				.attr("opacity", lineOpacity)
-				//.attr("class", "link")
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 2);
 
+			//attach a g with text to every datum in links 
 			var textEnter = linkLabel.enter().append("g")
 				.attr("class", "text")
+				//give them a tag attribute with link ids
 				.attr("tag", function(d, i) {
 					return "linkId_" + i;
 				});
 
+			//add our text / relationship names to the dom selections
 			linkText = textEnter
 				.append("text")
 				.attr("opacity", 0)
 				.text(function(d) {
-					return d.name; //Can be dynamic via d object 
+					return d.name;
 				});
 
-
-			//Do the same with the circles for the nodes - no
-
-
-
-			//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-
-			//Creates the graph data structure out of the json data
+			//restarts the graph with the new nodes and links
 			force
 				.nodes(nodes)
 				.links(links)
@@ -459,23 +454,12 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		};
 
-		function setText(textElmt, str) {
-			textElmt.textContent = str;
-			var box = textElmt.getBBox();
-			var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-			//rect.style("fill","red");
-			rect.setAttribute('fill', 'transparent');
-			rect.setAttribute("border", "1px solid #cccccc");
 
-			for (var n in box) {
-				rect.setAttribute(n, box[n]);
-			}
-			textElmt.parentNode.insertBefore(rect, textElmt);
-		}
-
+		//called on every tick of the force graph, reposition everything
 		force.on("tick", function() {
 
-
+			//x1,y1 is point1 .. x2,y2 is point2, link is the line passing through them
+			//reposition that such that it doesn't go out of canvas bounds
 			link.attr("x1", function(d) {
 					d.source.x = Math.max(radius, Math.min(width - radius, d.source.x));
 					return d.source.x;
@@ -493,19 +477,20 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return d.target.y;
 				});
 
+			//reposition relationship names in the midpoint of the link
 			linkText
 				.attr("transform", function(d) {
 					return "translate(" + (d.source.x + ((d.target.x - d.source.x) / 2)) + "," +
 						(d.source.y + ((d.target.y - d.source.y) / 2)) + ")";
 				});
+
+			//reposition names according to data and make them stay in our canvas and check for collision
 			node
 				.attr("transform", function(d) {
 					d.x = Math.max(radius, Math.min(width - radius, d.x));
 					d.y = Math.max(radius, Math.min(height - radius, d.y));
 					return "translate(" + d.x + "," + d.y + ")";
 				}).each(collide(0.6));
-
-
 
 		});
 

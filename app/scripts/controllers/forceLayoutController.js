@@ -9,10 +9,9 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 	$scope.shared = {
 		url: 'graph2.json'
 	};
+
 	$scope.xnodes = [];
-
 	$scope.xlinks = [];
-
 	$scope.nameToIdMap = {};
 
 	$scope.xnodes.getNode = function(name) {
@@ -20,18 +19,13 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 	};
 	$scope.counter = 0;
 
-	// Simple GET request example :
-	$http.get('http://localhost:8080/model/events').success(function(data, status, headers, config) {
-		//console.log(data);
+
+	$http.get('http://localhost:8080/model/events')
+	.success(function(data, status, headers, config) {
 		$scope.generateGraphFromData(data);
-		// this callback will be called asynchronously
-		// when the response is available
 	}).error(function(data, status, headers, config) {
-		// called asynchronously if an error occurs
-		// or server returns response with an error status.
 		console.log('error', data);
 	});
-	//$timeout(function() {$scope.shared.url = 'graph2.json';}, 7000);
 
 	$scope.isProperty = function(name) {
 		return name.charAt(0).toLowerCase() === name.charAt(0);
@@ -55,10 +49,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 		return node;
 	};
 
-	$scope.sendCommand = function(type, assertions) {
-
-		var assertionEvents = [];
-		// Simple POST request example (passing data) :
+	/*	// Simple POST request example (passing data) :
 		$http.post('/someUrl', {
 			msg: 'hello word!'
 				/*"type": "ADDED",
@@ -67,7 +58,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 				 "http://itonics.co/itonics#BusinessUnit",
 				 "http://itonics.co/rdf#type",
 				 "http://itonics.co/rdfs#Resource"
-				 ]*/
+				 ]
 		}).
 		success(function(data, status, headers, config) {
 			// this callback will be called asynchronously
@@ -77,8 +68,9 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 			// called asynchronously if an error occurs
 			// or server returns response with an error status.
 		});
-	};
+	};*/
 
+	//parse RDF data and convert into nodes and links d3 can draw
 	$scope.generateGraphFromData = function(data) {
 		data.forEach(function(d) {
 			if (d.type === "ADDED") {
@@ -102,6 +94,8 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 								console.log("predicate", predicate);
 								console.log("object", object);
 				*/
+
+				//filter by space and ignore properties then push parsed data into our nodes/links array
 				if (subject && space === "itonics" && valueSpace === "itonics" && !$scope.isProperty(subject) && !$scope.isProperty(object)) {
 					var subjectNode = $scope.createOrFindNode(subject, space);
 					var objectNode = $scope.createOrFindNode(object, space);
@@ -118,14 +112,9 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 				}
 			}
 		});
-		//console.log($scope.xnodes);
-		//console.log($scope.xlinks);
-		//	$scope.xlinks.forEach(function(link) {
-		//if (link.source === link.target)
-		//	console.log("B-I-N-G-O");
-		//	});
+
+		//pass data to nodes and links objects shared to the directive
 		$scope.nodes = $scope.xnodes;
 		$scope.links = $scope.xlinks;
 	};
 });
-//};
