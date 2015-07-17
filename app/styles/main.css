@@ -13,6 +13,16 @@ donut-chart
     cursor: pointer;
 }
 
+force-layout
+{
+    display: inline-block;
+
+    width: 500px;
+    height: 500px;
+
+    cursor: pointer;
+}
+
 tree-layout
 {
     display: inline-block;

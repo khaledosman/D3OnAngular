@@ -20,6 +20,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 	function Graph(scope, element, attr) {
 		var nodes = [],
 			links = [],
+			circle,
 			counter,
 			root = {},
 			optArray = [],
@@ -28,7 +29,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			link, node, linkText, line, linkLabel;
 
 		scope.addNode = function(name, id) {
-			
+
 			console.log(counter);
 			nodes.push({
 				"name": name,
@@ -159,7 +160,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					links.splice(i, 1);
 				} else i++;
 			}
-			nodes.splice(scope.findNodeIndex(id), 1); 
+			nodes.splice(scope.findNodeIndex(id), 1);
 			updateAutoComplete(nodes);
 			update();
 		};
@@ -285,8 +286,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		//Constants for the SVG
 		var el = element[0];
-		var width = window.innerWidth,
-			height = window.innerHeight;
+		var width = el.clientWidth,
+			height = el.clientHeight;
 
 		//Append a SVG to the directive's element of the html page. Assign this SVG as an object to svg
 		var svg = d3.select(el).append("svg")
@@ -393,9 +394,9 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.on('mouseout', mouseout)
 				.call(node_drag); //Added
 
-			var circle =
+			circle =
 				nodeEnter.append("circle")
-				.attr("r", 8)
+				.attr("r", radius)
 				.style("fill", function(d) {
 					return color(d.group);
 				});
@@ -495,9 +496,11 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				});
 			node
 				.attr("transform", function(d) {
+					d.x = Math.max(radius, Math.min(width - radius, d.x));
+					d.y = Math.max(radius, Math.min(height - radius, d.y));
 					return "translate(" + d.x + "," + d.y + ")";
-				})
-				.each(collide(0.6));
+				}).each(collide(0.6));
+
 
 
 		});
