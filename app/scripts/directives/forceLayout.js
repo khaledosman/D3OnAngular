@@ -1,6 +1,8 @@
 app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
-
+	//directive's attribute
 	return {
+		//isolated scope's attributes
+		// '=' means twoway data binding '@' is oneway '&' is inherited from parent scope
 		scope: {
 			'nodes': '=',
 			'links': '=',
@@ -18,6 +20,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 	}
 
 	function Graph(scope, element, attr) {
+		//define our variables, might need to be cleaned
 		var nodes = [],
 			links = [],
 			circle,
@@ -33,12 +36,15 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		var width = window.innerWidth,
 			height = window.innerHeight;
 
+		//helper functions to add/remove/search for stuff
+
 		scope.addNode = function(name, id) {
 			console.log(counter);
 			nodes.push({
 				"name": name,
 				"id": counter
 			});
+
 			counter++;
 			update();
 
@@ -61,8 +67,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			console.log(createAssertionEvent("ADDED", Assertion));
 		};
 
+		//autocomplete search
 		scope.searchNode = function searchNode() {
-
 			//find the node
 			var selectedVal = document.getElementById('search').value;
 
@@ -81,7 +87,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					.style("opacity", 1);
 			}
 		};
-		//adjust threshold
+
+		//adjust threshold from slider
 		scope.setThreshold = function(thresh) {
 			links.splice(0, links.length);
 			update();
@@ -93,6 +100,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			update();
 		};
 
+		//autocomplete search data
 		function updateAutoComplete(nodes) {
 			optArray = [];
 			for (var i = 0; i < nodes.length - 1; i++) {
@@ -113,7 +121,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			});
 		}
 
-		//has a problem when adding links after 
+		//removes a node has a problem when adding links after, also need to update our graphRec with 
+		//changes to nodes/links array
 		scope.removeNode = function(id) {
 
 			var i = 0;
@@ -171,6 +180,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			update();
 		};
 
+		//get node by id
 		scope.findNode = function(id) {
 			for (var i in nodes) {
 				if (nodes[i].id == id) return nodes[i];
@@ -178,6 +188,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		};
 
+		//get node index by id
 		scope.findNodeIndex = function(id) {
 			for (var i = 0; i < nodes.length; i++) {
 				if (nodes[i].id == id) {
@@ -186,6 +197,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			}
 		};
 
+		//collision detection prevents nodes from colliding
 		function collide(alpha) {
 			var quadtree = d3.geom.quadtree(nodes);
 			return function(d) {
@@ -212,29 +224,32 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			};
 		}
 
+		//node mouseover
 		function mouseover() {
 
 			var selected = d3.select(this);
+			//get node's name
 			var name = selected.text();
-			//linkText.attr("opacity",1);
-			//linkText.attr("opacity", 1);
 
+			//dim all nodes and links
 			node.attr("opacity", 0.2);
 			link.attr("opacity", 0.1);
+			//search for links connected to this node
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
-
+					//highlight connected links
 					d3.select(this).attr("opacity", 0.7);
+					//get link id
 					var id = d3.select(this).attr('id');
-
-					var selected = linkText.filter(function(d, i) {
+					//get relationship labels of that id
+					var selectedTexts = linkText.filter(function(d, i) {
 						return i == id;
 					});
-					selected.style("opacity", "1");
-
+					//highlight them aswell
+					selectedTexts.style("opacity", "1");
+					//highlight connected nodes aswell
 					node.each(function(n) {
 						if (n.name === d.source.name || n.name === d.target.name) {
-
 							var self = d3.select(this);
 							self.attr("opacity", 1);
 						}
@@ -245,13 +260,15 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 		}
 
+		//node mouseout
 		function mouseout() {
 			var selected = d3.select(this);
 			var name = selected.text();
+			//restore default opacity, should use variables
 			node.attr("opacity", 1);
 			link.attr("opacity", 0.5);
-
 			linkText.attr("opacity", 0);
+			//undo mouseover, hide relationship labels that were highlighted on mouseover
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 					var id = d3.select(this).attr('id');
@@ -275,12 +292,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		//register listeners again and pin
 		function dragend(d, i) {
 			node.on("mouseover", mouseover).on("mouseout", mouseout);
-			d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+			//pin node
+			d.fixed = true;
 		}
 
 		//unpin
 		function releasenode(d) {
-			d.fixed = false; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+			d.fixed = false;
 			force.resume();
 		}
 
@@ -303,6 +321,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.friction(0.7)
 			.gravity(0.001);
 
+
+		//angular watchers, should use watchgroup or just share one object instead
 		scope.$watch('counter', function(newval, oldval) {
 			counter = newval;
 		});
@@ -313,6 +333,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			root.nodes = nodes;
 			if (nodes && links) {
 				graphRec = JSON.parse(JSON.stringify(root));
+				//update autocomplete options with new nodes
 				updateAutoComplete(nodes);
 				update();
 			}
@@ -323,6 +344,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			console.log('links changed', links);
 			root.links = links;
 			if (links && nodes) {
+				//used for threshold slider, acts as a copy of our links array
 				graphRec = JSON.parse(JSON.stringify(root));
 				update();
 			}
@@ -334,6 +356,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.on("drag", dragmove)
 			.on("dragend", dragend);
 
+		//appends a transparent rectangle as a placeholder for text
 		function setText(textElmt, str) {
 			textElmt.textContent = str;
 			var box = textElmt.getBBox();
