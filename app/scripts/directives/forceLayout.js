@@ -341,17 +341,17 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		// define arrow markers for graph links
 
 		svg.append('svg:defs').append('svg:marker')
-				.attr("id", "arrow")
-				.attr("viewBox", "0 -5 10 10")
-				.attr("refX", 19)
-				.attr("refY", 0)
-				.attr("markerWidth", 6)
-				.attr("markerHeight", 6)
-				.attr("orient", "auto")
-				.append("path")
-				.attr('d', 'M0,-5L10,0L0,5')
-				.attr('fill', '#000')
-				.style("opacity", 0.5);
+			.attr("id", "arrow")
+			.attr("viewBox", "0 -5 10 10")
+			.attr("refX", 19)
+			.attr("refY", 0)
+			.attr("markerWidth", 6)
+			.attr("markerHeight", 6)
+			.attr("orient", "auto")
+			.append("path")
+			.attr('d', 'M0,-5L10,0L0,5')
+			.attr('fill', '#000')
+			.style("opacity", 0.5);
 
 
 		svg.append('svg:defs').append('svg:marker')
@@ -376,6 +376,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.attr('d', 'M10,-5L0,0L10,5')
 			.attr('fill', '#000');
 
+		var lastKeyDown = -1;
 
 		function keydown() {
 			d3.event.preventDefault();
@@ -591,7 +592,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 					// reposition drag line
 					drag_line
-				.style('marker-end', 'url(#arrow)')
+						.style('marker-end', 'url(#arrow)')
 						.classed('hidden', false)
 						.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' + mousedown_node.x + ',' + mousedown_node.y);
 
@@ -679,8 +680,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return d === selected_link;
 				});
 
-
-
 			//create a container for relationship labels with the links array bound to them
 			linkLabel = svg.selectAll(".text")
 				.data(links)
@@ -703,8 +702,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.attr("id", function(d, i) {
 					return i;
 				})
-
-			.attr("opacity", lineOpacity)
+				.attr("opacity", lineOpacity)
+				.style('marker-start', function(d) {
+					return d.left ? 'url(#start-arrow)' : '';
+				})
+				.style('marker-end', function(d) {
+					return d.right ? 'url(#end-arrow)' : '';
+				})
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 2)
 				.on('mousedown', function(d) {
