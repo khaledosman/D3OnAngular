@@ -488,7 +488,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			// because :active only works in WebKit?
 			svg.classed('active', false);
-
+			drag_line.style('stroke','#FFFFFF');
 			// clear mouse event vars
 			resetMouseVars();
 		}
