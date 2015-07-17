@@ -86,7 +86,7 @@ svg:not(.active):not(.ctrl) {
   cursor: crosshair;
 }
 
-path.link {
+.link path{
   fill: none;
   stroke: #000;
   stroke-width: 4px;
@@ -97,24 +97,24 @@ svg:not(.active):not(.ctrl) path.link {
   cursor: pointer;
 }
 
-path.link.selected {
+.link.selected {
   stroke-dasharray: 10,2;
 }
 
-path.link.dragline {
+.link.dragline {
   pointer-events: none;
 }
 
-path.link.hidden {
+.link.hidden {
   stroke-width: 0;
 }
 
-circle.node {
+.node {
   stroke-width: 1.5px;
   cursor: pointer;
 }
 
-circle.node.reflexive {
+.node.reflexive {
   stroke: #000 !important;
   stroke-width: 2.5px;
 }
@@ -128,3 +128,4 @@ text.id {
   text-anchor: middle;
   font-weight: bold;
 }
+*/

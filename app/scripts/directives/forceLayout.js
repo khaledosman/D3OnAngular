@@ -40,6 +40,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			mousedown_node = null,
 			mouseup_node = null;
 
+
+
 		function resetMouseVars() {
 			mousedown_node = null;
 			mouseup_node = null;
@@ -352,11 +354,11 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		function svgmousemove() {
 			if (!mousedown_node) return;
 
-			console.log(mousedown_node.x);
 			// update drag line
 			drag_line.attr('d', 'M' + mousedown_node.x + ',' + mousedown_node.y + 'L' +
 				d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
 
+			console.log(drag_line.attr('d'));
 			update();
 		}
 
@@ -454,7 +456,8 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			var lineOpacity = 0.5;
 
 			drag_line = svg.append('svg:path')
-				.attr('class', 'link dragline hidden')
+				.data(links)
+				.attr('class', 'dragline hidden')
 				.attr('d', 'M0,0L0,0');
 
 			//add our arrow styles
@@ -481,10 +484,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 
 			//create our nodes dom containers and bind data to them
 			node = svg.selectAll(".node")
-				.data(nodes)
-				.classed("selected", function(d) {
-					return d === selected_node;
-				});
+				.data(nodes);
 
 			//remove dom elements that are not bound to data
 			node.exit().remove();
@@ -499,7 +499,6 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					mousedown_node = d;
 					if (mousedown_node === selected_node) selected_node = null;
 					else selected_node = mousedown_node;
-					selected_link = null;
 
 
 					// reposition drag line
@@ -561,6 +560,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					selected_node = null;
 					update();
 				});
+
 			//.on('mouseover', mouseover)
 			//.on('mouseout', mouseout)
 			//.call(node_drag);
@@ -659,7 +659,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 		//called on every tick of the force graph, reposition everything
 		force.on("tick", function() {
 
-			/*drag_line.attr('d', function(d) {
+			drag_line.attr('d', function(d) {
 				var deltaX = d.target.x - d.source.x,
 					deltaY = d.target.y - d.source.y,
 					dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
@@ -672,7 +672,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					targetX = d.target.x - (targetPadding * normX),
 					targetY = d.target.y - (targetPadding * normY);
 				return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
-			});*/
+			});
 
 			//x1,y1 is point1 .. x2,y2 is point2, link is the line passing through them
 			//reposition that such that it doesn't go out of canvas bounds
@@ -708,7 +708,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					return "translate(" + d.x + "," + d.y + ")";
 				}).each(collide(0.6));
 
-				
+
 
 		});
 
