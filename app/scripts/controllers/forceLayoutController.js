@@ -9,14 +9,14 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 	$scope.shared = {
 		url: 'graph2.json'
 	};
-	$scope.nodes = [];
+	$scope.xnodes = [];
 
-	$scope.links = [];
+	$scope.xlinks = [];
 
 	$scope.nameToIdMap = {};
 
-	$scope.nodes.getNode = function(name) {
-		return $scope.nodes[$scope.nameToIdMap[name]];
+	$scope.xnodes.getNode = function(name) {
+		return $scope.xnodes[$scope.nameToIdMap[name]];
 	};
 	$scope.counter = 0;
 
@@ -38,7 +38,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 	};
 
 	$scope.createOrFindNode = function(name, workspace) {
-		var node = $scope.nodes.getNode(name);
+		var node = $scope.xnodes.getNode(name);
 
 		if (!node) {
 			node = {
@@ -49,7 +49,7 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 			};
 
 			$scope.nameToIdMap[name] = node.id;
-			$scope.nodes.push(node);
+			$scope.xnodes.push(node);
 		}
 
 		return node;
@@ -114,16 +114,18 @@ app.controller('forceLayoutController', function($scope, $interval, $http) {
 						workspace: space
 					};
 
-					$scope.links.push(link);
+					$scope.xlinks.push(link);
 				}
 			}
 		});
-		//console.log($scope.nodes);
-		//console.log($scope.links);
-		//	$scope.links.forEach(function(link) {
+		//console.log($scope.xnodes);
+		//console.log($scope.xlinks);
+		//	$scope.xlinks.forEach(function(link) {
 		//if (link.source === link.target)
 		//	console.log("B-I-N-G-O");
 		//	});
+		$scope.nodes = $scope.xnodes;
+		$scope.links = $scope.xlinks;
 	};
 });
 //};

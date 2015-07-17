@@ -309,10 +309,11 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			console.log('nodes changed', nodes);
 			root.nodes = nodes;
 
-
-			graphRec = JSON.parse(JSON.stringify(root));
-			updateAutoComplete(nodes);
-			update();
+			if (nodes && links) {
+				graphRec = JSON.parse(JSON.stringify(root));
+				updateAutoComplete(nodes);
+				update();
+			}
 
 		});
 
@@ -340,9 +341,10 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			links = newval;
 			console.log('links changed', links);
 			root.links = links;
-
-			graphRec = JSON.parse(JSON.stringify(root));
-			update();
+			if (links && nodes) {
+				graphRec = JSON.parse(JSON.stringify(root));
+				update();
+			}
 		});
 
 
