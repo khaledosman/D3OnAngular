@@ -101,8 +101,9 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			var name = selected.text();
 			//linkText.attr("opacity",1);
 			//linkText.attr("opacity", 1);
+
+			node.attr("opacity", 0.2);
 			link.attr("opacity", 0.1);
-			node.attr("opacity", 0.1);
 			link.each(function(d) {
 				if (d.source.name === name || d.target.name === name) {
 
@@ -190,11 +191,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				"target": scope.findNode(target),
 				"value": value
 			});*/
-			links.push({
+			var link = {
 				"source": scope.findNode(Math.floor(Math.random() * (nodes.length - 2 + 1)) + 1),
 				"target": scope.findNode(Math.floor(Math.random() * (nodes.length - 2 + 1)) + 1),
 				"value": scope.findNode(Math.floor(Math.random() * (8 - 1 + 1)) + 1)
-			});
+			};
+			links.push(link);
+			console.log(link);
 
 			update();
 		};
