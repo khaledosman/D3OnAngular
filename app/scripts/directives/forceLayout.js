@@ -386,7 +386,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			lastKeyDown = d3.event.keyCode;
 
 			// ctrl
-			if (d3.event.keyCode === 17) {
+			if (!d3.event.keyCode === 17) {
 				circle.call(force.drag);
 				svg.classed('ctrl', true);
 			}
@@ -439,7 +439,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			lastKeyDown = -1;
 
 			// ctrl
-			if (d3.event.keyCode === 17) {
+			if (!d3.event.keyCode === 17) {
 				circle
 					.on('mousedown.drag', null)
 					.on('touchstart.drag', null);
@@ -454,7 +454,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			// because :active only works in WebKit?
 			svg.classed('active', true);
 
-			if (d3.event.ctrlKey || mousedown_node || mousedown_link) return;
+			if (!d3.event.ctrlKey || mousedown_node || mousedown_link) return;
 
 			// insert new node at point
 			var point = d3.mouse(this),
@@ -513,7 +513,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 			.size([width, height])
 			.linkDistance(80)
 			.linkStrength(0.3)
-			.charge(-200)
+			.charge(-100)
 			.friction(0.7)
 			.gravity(0.001);
 
@@ -583,7 +583,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.attr("class", "node")
 				.on('dblclick', releasenode)
 				.on('mousedown', function(d) {
-					if (d3.event.ctrlKey) return;
+					if (!d3.event.ctrlKey) return;
 
 					// select node
 					mousedown_node = d;
@@ -650,13 +650,13 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 					selected_link = link;
 					selected_node = null;
 					update();
-				});
+				})
 
 
 
-			//.on('mouseover', mouseover)
-			//.on('mouseout', mouseout)
-			//.call(node_drag);
+			.on('mouseover', mouseover)
+			.on('mouseout', mouseout)
+			.call(node_drag);
 
 			//append a circle to our node dom container
 			var circle = nodeEnter.append("circle")
@@ -714,7 +714,7 @@ app.directive('forceLayout', ['d3Service', '$http', function(d3Service, $http) {
 				.style("marker-end", "url(#arrow)")
 				.attr("stroke-width", 2)
 				.on('mousedown', function(d) {
-					if (d3.event.ctrlKey) return;
+					if (!d3.event.ctrlKey) return;
 
 					// select link
 					mousedown_link = d;
