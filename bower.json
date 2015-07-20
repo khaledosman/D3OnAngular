@@ -25,6 +25,7 @@
     "angular": "~1.4.1",
     "d3-tip": "~0.6.7",
     "jquery": "~2.1.4",
-    "jquery-ui": "~1.11.4"
+    "jquery-ui": "~1.11.4",
+    "angular-bootstrap": "~0.13.0"
   }
 }
